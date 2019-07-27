@@ -74,69 +74,35 @@
 						<p class="Ph1"><span>{豌豆思维}</span>数学体验课欢迎<br />参与</p>
 						<p class="Ph2">4月16日  8:00 开始  <span>北京</span></p>
 					</router-link>
-					<router-link to="" tag="li">
-						<img src="../../build/27.jpg"/>
-						<p class="Ph1"><span>{豌豆思维}</span>数学体验课欢迎<br />参与</p>
-						<p class="Ph2">4月16日  8:00 开始  <span>北京</span></p>
-					</router-link>
-					<router-link to="" tag="li">
-						<img src="../../build/27.jpg"/>
-						<p class="Ph1"><span>{豌豆思维}</span>数学体验课欢迎<br />参与</p>
-						<p class="Ph2">4月16日  8:00 开始  <span>北京</span></p>
-					</router-link>
-					<router-link to="" tag="li">
-						<img src="../../build/27.jpg"/>
-						<p class="Ph1"><span>{豌豆思维}</span>数学体验课欢迎<br />参与</p>
-						<p class="Ph2">4月16日  8:00 开始  <span>北京</span></p>
-					</router-link>
 				</ul>
 			</div>
 		</div>
 		<hr />
 		<!--推荐企业-->
 		<div class="tjqy">
-			<p><router-link to="" tag="span" >推荐企业</router-link>
-				<router-link to="/moreCompanies" tag="span">查看更多<i class="iconfont">&#xe61f;</i></router-link>
-			</p>
-			<div class="tj">
+				<p><router-link to="" tag="span" >推荐企业</router-link>
+					<router-link @click.native="refresh" to="/moreCompanies" tag="span" v-show="hasMorecompany">查看更多<i class="iconfont">&#xe61f;</i></router-link>
+				</p>
+			<div class="tj" v-show="hasTuicompany">
 				<ul>
-					<router-link to="" tag="li">
-						<div class="tup">
-							<img src="../../build/zz.jpg"/>
-						</div>
-						<div class="fus">
-							<p class="q">美丽服装有限公司</p>
-							<p class="w">河南省  郑州市  中原区</p>
-							<p class="r">已关注：<span>300</span>人</p>
-							<p class="t">入驻资金：<span>￥<span>3000</span></span></p>
-							<p class="e">+关注</p>
-						</div>
-					</router-link>
-					<router-link to="" tag="li">
-						<div class="tup">
-							<img src="../../build/zz.jpg"/>
-						</div>
-						<div class="fus">
-							<p class="q">美丽服装有限公司</p>
-							<p class="w">河南省  郑州市  中原区</p>
-							<p class="r">已关注：<span>300</span>人</p>
-							<p class="t">入驻资金：<span>￥<span>3000</span></span></p>
-							<p class="e">+关注</p>
-						</div>
-					</router-link>
-					<router-link to="" tag="li">
-						<div class="tup">
-							<img src="../../build/zz.jpg"/>
-						</div>
-						<div class="fus">
-							<p class="q">美丽服装有限公司</p>
-							<p class="w">河南省  郑州市  中原区</p>
-							<p class="r">已关注：<span>300</span>人</p>
-							<p class="t">入驻资金：<span>￥<span>3000</span></span></p>
-							<p class="e">+关注</p>
-						</div>
-					</router-link>
+					<li v-for="(item,index) in Reccompany" :key="index">
+						<router-link tag="div" :to="'/enterpriseintroduction/'+item.id"   @click.native="flushCom">
+							<div class="tup">
+								<img :src="imgUrl+item.logo_src"/>
+							</div>
+							<div class="fus">
+								<p class="q">{{item.company_name}}</p>
+								<p class="w">{{item.company_address}}</p>
+								<p class="r">已关注：<span>{{item.follow_num}}</span>人</p>
+								<p class="t">入驻资金：<span>￥<span>{{item.money}}</span></span></p>								
+							</div>
+						</router-link>
+						<p v-show="hasfollow" class="e" :class="{'hasfollow':item.is_follow=='已关注'}" @click="follow_company(Reccompany,index)">{{item.is_follow}}</p>
+					</li>
 				</ul>
+			</div>
+			<div class="EmptyAcLi" v-show="!hasTuicompany">
+				<p class="EmptyAc">———————— &nbsp;空空如也！&nbsp;  ————————</p>
 			</div>
 		</div>
 		<!--推荐企业-->
@@ -179,7 +145,12 @@
 			    current:0,
 			    enterclassc:[],
 			    activityclassc:[],
-			    imgUrl:''
+			    imgUrl:'',
+			    Reccompany:[],
+			    hasfollow:false,
+			    hasTuicompany:false,//是否有推荐企业
+			    hasMorecompany:false,//是否有更多推荐企业
+			    
 			}
 		},
 		methods:{
@@ -188,15 +159,47 @@
 			},
 			onChange(index){
 	        	this.current=index;
-	       },
-	       qiye(){
+	        },
+	        qiye(){
 	       		this.current=0;
 	       		this.$refs.hotlunb.swipeTo(0);
-	       },
-	       huodong(){
+	        },
+	        huodong(){
 	       		this.current=1;
 	       		this.$refs.hotlunb.swipeTo(1);
-	       }
+	        },
+	        refresh(){
+	        	this.$router.go(0);
+	        },
+	       	flushCom(){
+				document.documentElement.scrollTop = 0;
+				var backtop=setInterval(()=>{
+					document.documentElement.scrollTop = 0
+					clearInterval(backtop);
+				},100)
+			},
+	        follow_company(type,index){
+				if(type[index].is_follow=="+关注"){
+					type[index].is_follow="已关注";
+					type[index].follow_num+=1;
+					var token = window.localStorage.getItem("token");
+					var that=this;
+					$.ajax({
+						type:"post",
+						url:join+"company/toFollow",
+						dataType:"json",
+						data:{token:token,uid:type[index].uid},
+						success:function(data){
+			  				that.$message.warning("关注成功！");
+			  			},
+			  			error:function(err){
+							console.log("请求失败"+err);
+						}
+					});
+				}else{
+					 this.$message.warning("已经关注过了哦！");
+				}
+			}
 		},
 	  	mounted(){
 	  		this.imgUrl=imgJoin;
@@ -259,13 +262,40 @@
 						console.log("请求失败");
 					}
 				});
+				//推荐企业
 				$.ajax({
 					type:"post",
 					url:join+"index/love_company",
 					dataType:"json",
-					data:{token:token},
+					data:{},
 					success:function(data){
 						console.log(data);
+						that.Reccompany=data.data;
+						if(data.uid){
+							that.hasfollow=true;
+						}else{
+							that.hasfollow=false;
+						}
+						
+						for (var i=0;i<that.Reccompany.length;i++){
+							if (that.Reccompany[i].is_follow==0) {								
+								that.Reccompany[i].is_follow="+关注";
+							}else{
+								that.Reccompany[i].is_follow="已关注";
+							}
+						}
+						//判断推荐企业
+						if(that.Reccompany.length==0){
+							that.hasTuicompany=false;
+							that.hasMorecompany=false;
+						}else if(that.Reccompany.length<=3){
+							that.hasTuicompany=true;
+							that.hasMorecompany=false;
+						}else if(that.Reccompany.length>3){
+							that.hasTuicompany=true;
+							that.hasMorecompany=true;
+							that.Reccompany=that.Reccompany.splice(0,3);
+						}
 					},
 					error:function(err){
 						console.log("请求失败");
@@ -497,6 +527,7 @@
 	.tj>ul>li{
 	    height: 8rem;
 	    margin-left: 3%;
+	    position: relative;
 	}
 	.tj>ul>li:nth-child(n+2){
 		margin-top: 2%;
@@ -550,16 +581,36 @@
 	.t>span>span{
 		font-size: 1.7rem;
 	}
+	/*关注按钮*/
 	.e{
-		width: 22%;
+		width: 4.2rem;
+	    background: rgba(250,231,79,1);
+	    border-radius: 0.5rem;
 	    height: 2rem;
 	    text-align: center;
 	    line-height: 2rem;
-	    background: #FAE64F;
 	    position: absolute;
 	    top: 40%;
-	    right: 0%;
-	    border-radius: 0.5rem;
+	    right: 5%;
+	    font-size: 1.4rem;
+	    font-family: PingFang-SC-Medium;
+	    font-weight: 500;
+	    color: rgba(51,51,51,1);
+	}
+	.e.hasfollow{
+		background:#F0F0F0;
+	}
+	/*暂无推荐企业文字*/
+	.EmptyAcLi{
+		height: 4rem;
+		text-align: center;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+	.EmptyAcLi>.EmptyAc{
+		font-size: 1rem;
+		color: #B0B0B0;
 	}
 	/*底部*/
 	.footer{

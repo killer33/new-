@@ -530,6 +530,7 @@
 		display: inline-block;
     	float: right;
 	}
+	/*暂未推荐企业文字*/
 	.enterpriseintroduction .guesslove1>.EmptyAcLi{
 		height: 4rem;
 		text-align: center;
