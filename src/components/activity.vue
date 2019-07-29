@@ -2,26 +2,26 @@
 	<!--活动-->
 	<div class="activity">
 		<div class="heads1">
-			<i class="iconfont search1" @click="activity_search">&#xe615;</i>
+			<i class="iconfont search1" @click="">&#xe615;</i>
 			<input type="text" name="" id="activity_search" value="" placeholder="搜索您感兴趣的公司"/>
 		</div>
 		<div class="A_nav">
 			<ul >
-				<li :class="{'ss':clicked==-1}" @click="all">全部</li>
-				<li v-for="(item,index) in info" :key="index" :class="{'ss':clicked==index}" @click="type(item.id,index)">{{item.activity_type}}</li>
+				<li :class="{'ss':clicked==-1}" @click="type(0,0),changefoucs(-1)">全部</li>
+				<li v-for="(item,index) in info" :key="index" :class="{'ss':clicked==index}" @click="type(item.id,0),changefoucs(index,0)">{{item.activity_type}}</li>
 			</ul>
 		</div>
 		<div class="screening">
 			<ul>
-				<li class="jjs" @click="zonghe">综合</li>
-				<li id="renshu" @click="num">人数
-					<div class="shang"></div>
-					<div class="xia"></div>
+				<li class="jjs" @click="type(itemid,0)">综合</li>
+				<li id="renshu" @click="type(itemid,1)">人数
+					<div class="shang" :class='{"active":Number=="asc"}'></div>
+					<div class="xia" :class="{'active':Number=='desc'}"></div>
 				</li>
-				<li id="jiage" @click="price">价格
+				<li id="jiage" @click="type(itemid,2)">价格
 					<div class="shang"></div>
 					<div class="xia"></div></li>
-				<li id="shijian" @click="time">时间
+				<li id="shijian" @click="type(itemid,3)">时间
 					<div class="shang"></div>
 					<div class="xia"></div>
 				</li>
@@ -30,37 +30,37 @@
 		<hr />
 		<div class="love1">
 			<!--主题内容-->
-			<ul v-show="main">
+			<!--<ul v-show="main">
 				<router-link to="/activityIntroduction" tag="li" v-for="item in search_result">
 					<img :src="item.pic"/>
 					<p class="Ph11"><span>{<span>{{item.faburen}}</span>}</span>{{item.tit}}</p>
 					<p class="Ph22"><span>{{parseInt(item.start) | datetimeFilter}}</span> 开始  <span>{{item.address}}</span></p>
 				</router-link>
-			</ul>
+			</ul>-->
 			<!--搜索内容-->
-			<ul v-show="search">
+			<!--<ul v-show="search">
 				<router-link to="/activityIntroduction" tag="li" v-for="item in search_result">
 					<img :src="item.pic"/>
 					<p class="Ph11"><span>{<span>{{item.faburen}}</span>}</span>{{item.tit}}</p>
 					<p class="Ph22"><span>{{parseInt(item.start) | datetimeFilter}}</span> 开始  <span>{{item.address}}</span></p>
 				</router-link>
-			</ul>
+			</ul>-->
 			<!--活动分类id内容-->
-			<ul v-show="typeshow">
+			<ul>
 				<router-link to="/activityIntroduction" tag="li" v-for="item in typedata">
-					<img :src="item.pic"/>
+					<img :src="imgUrl+item.pic"/>
 					<p class="Ph11"><span>{<span>{{item.faburen}}</span>}</span>{{item.tit}}</p>
 					<p class="Ph22"><span>{{parseInt(item.start) | datetimeFilter}}</span> 开始  <span>{{item.address}}</span></p>
 				</router-link>
 			</ul>
 			<!--排序-->
-			<ul v-show="sort">
+			<!--<ul v-show="sort">
 				<router-link to="/activityIntroduction" tag="li" v-for="item in kajiji">
 					<img :src="item.pic"/>
 					<p class="Ph11"><span>{<span>{{item.faburen}}</span>}</span>{{item.tit}}</p>
 					<p class="Ph22"><span>{{parseInt(item.start) | datetimeFilter}}</span> 开始  <span>{{item.address}}</span></p>
 				</router-link>
-			</ul>
+			</ul>-->
 			<div style="clear: both;"></div>
 		</div>
 		<div class="activity_ms"></div>
@@ -96,6 +96,7 @@
 	export default {
 		data(){ 
 	    	return { 
+	    		imgUrl:'',
 	    		clicked:-1,
 	    		main:true,
 	    		search:false,
@@ -106,212 +107,83 @@
 	    		typedata:[],    //活动分类id内容获取-- 分页
 	    		kajiji:[],   //排序
 	    		a:1,
+	    		Number:null, //人数排序
+	    		Price:null,//价格排序
+	    		Start:null,//时间排序
+	    		Repaixv:0,//人数排序点击次数
+	    		Jiapaixv:0,	//价格排序点击次数
+	    		Shipaixv:0,	//时间排序点击次数
+	    		itemid:0,//itemid
+	    		
 	    	}
 	    },
 	    methods:{
-	    	//全部
-	    	all:function(){
-	    		this.clicked=-1;
-	    		this.main=true;
-	    		this.search=false;
-	    		this.sort=false;
-	    		this.typeshow=false;
-	    		var that = this;
-				var page = 1;
-				var token = window.localStorage.getItem("token");
-				$.ajax({
-					type:"post",
-					url:join+"activity/search?page="+page,//搜索接口
-					dataType:"json",
-					data:{token:token},
-					success:function(data){
-		  				that.search_result=data.info.data;
-		  				console.log(that.search_result);
-		  				for (var i = 0; i<that.search_result.length;i++) {
-			  				if(that.search_result[i].faburen){
-								if (that.search_result[i].faburen.length>4) {
-									that.search_result[i].faburen=that.search_result[i].faburen.substring(0,4)+"...";
-								}
-								if (that.search_result[i].tit.length>17) {
-									that.search_result[i].tit=that.search_result[i].tit.substring(0,17)+"...";
-								}
-							}
-						}
-		  				page++;
-		  				console.log("获取活动主体内容成功,当前length= " + that.search_result.length  + "当前页码变为：" +page+ "  已做好请求第二页的准备");
-					},
-		  			error:function(err){
-						console.log("请求失败");
-						console.log(err);
-					}
-				});
-		  		
-		  		//	主体部分分页
-		  		// 设置一个开关来避免重复请求数据 
-		    	let sw = true;               
-		    	// 注册scroll事件并监听     
-		    	window.addEventListener('scroll',function(){   
-		    		//获取屏幕高度
-		    		var viewHeight = $(window).height();
-		    		var scrollTop = $(window).scrollTop();
-		    		var scrollHeight = $(document).height();
-		    		
-		    		//判断是否滚动到底部
-		    		if (viewHeight+scrollTop==scrollHeight) {
-		    			if (sw==true) {
-		    				//将开关关闭
-		    				sw=false;
-		    				$.ajax({
-		    					url:join+"activity/search?page="+page,
-		    					type:"post",
-		    					data:{token:token,},
-		    					dataType:'json',
-		    					success:function(data){
-		    						that.kak = data.info.data;
-		    						if (that.kak.length==0) {
-		    							sw=false;
-		    							return;
-		    						}else{
-		    							page++;
-		    							that.search_result=that.search_result.concat(that.kak);
-		    							for (var i = 0; i<that.search_result.length;i++) {
-		    								if(that.kak[i].faburen){
-												if (that.search_result[i].faburen.length>4) {
-													that.search_result[i].faburen=that.search_result[i].faburen.substring(0,4)+"...";
-												}
-												if (that.search_result[i].tit.length>17) {
-													that.search_result[i].tit=that.search_result[i].tit.substring(0,17)+"...";
-												}
-											}
-										}
-		    							sw = true;
-		    							console.log("分页请求成功，长度为"+that.kak.length+" 当前总长度  "+that.search_result.length+" 页码变为page="+page);
-		    						}
-								},
-								error:function(err){
-									console.log("请求失败");
-								},
-		    				});
-		    			}
-		    		}
-		    	});
-	    	},
-	    	//搜索
-	    	activity_search:function(){
-	    		this.main=false;
-	    		this.typeshow=false;
-	    		this.sort=false;
-	    		this.search=true;
-	    		var that = this;
-	    		var page = 1;//页码
-	    		var token = window.localStorage.getItem("token");
-	    		var tit = $("#activity_search").val();//获取搜索活动主题关键词
-	    		$.ajax({
-	    			type:"post",
-	    			url:join+"activity/search?page="+page,
-	    			data:{token:token,tit:tit,},
-					dataType:'json',
-					success:function(data){
-						page++;
-						that.search_result = data.info.data;
-						for (var i = 0; i<that.search_result.length;i++) {
-							if (that.search_result[i].faburen.length>4) {
-								that.search_result[i].faburen=that.search_result[i].faburen.substring(0,4)+"...";
-							}
-							if (that.search_result[i].tit.length>17) {
-								that.search_result[i].tit=that.search_result[i].tit.substring(0,17)+"...";
-							}
-						}
-						console.log("搜索成功,当前length= " + that.search_result.length  + "当前页码变为：" +page+ "  已做好请求第二页的准备");
-						console.log("搜索内容："+tit);
-					},
-					error:function(err){
-						console.log("请求失败");
-					}
-	    		});
-	    		
-//	    		---搜索分页
-
-		    	// 设置一个开关来避免重复请求数据 
-		    	let sw = true;               
-		    	// 注册scroll事件并监听     
-		    	window.addEventListener('scroll',function(){   
-		    		//获取屏幕高度
-		    		var viewHeight = $(window).height();
-//		    		console.log("屏幕高度："+viewHeight);
-		    		//滚动过的距离（滚动条到顶部的距离）
-		    		var scrollTop = $(window).scrollTop();
-//		    		console.log("滚动过的距离："+scrollTop);
-		    		//滚动条的总高度
-		    		var scrollHeight = $(document).height();
-//		    		console.log("滚动条的总高度："+scrollHeight);
-		    		
-		    		//判断是否滚动到底部
-		    		if (viewHeight+scrollTop==scrollHeight) {
-		    			if (sw==true) {
-		    				//将开关关闭
-		    				sw=false;
-		    				$.ajax({
-		    					url:join+"activity/search?page="+page,
-		    					type:"post",
-		    					data:{token:token,tit:tit,},
-		    					dataType:'json',
-		    					success:function(data){
-									that.kak = data.info.data;
-									if (that.kak.length==0) {
-										sw==false;
-										return;
-									}else{
-										page++;
-										sw = true;
-										that.search_result=that.search_result.concat(that.kak);
-										for (var i = 0; i<that.search_result.length;i++) {
-											if (that.search_result[i].faburen.length>4) {
-												that.search_result[i].faburen=that.search_result[i].faburen.substring(0,4)+"...";
-											}
-											if (that.search_result[i].tit.length>17) {
-												that.search_result[i].tit=that.search_result[i].tit.substring(0,17)+"...";
-											}
-										}
-										console.log("分页请求成功，长度为"+that.kak.length+" 当前总长度  "+that.search_result.length+" 页码变为page="+page);
-									}
-								},
-								error:function(err){
-									console.log("请求失败");
-								},
-		    				});
-		    			}
-		    		}
-		    	});
+	    	changefoucs(index){
+	    		this.clicked = index;
 	    	},
 	    	//获取活动分类ID--获取分页数据
-	    	type:function(item,index){
-	    		this.clicked = index;
-	    		this.main=false;
-	    		this.search=false;
-	    		this.sort=false;
-	    		this.typeshow=true;
+	    	type:function(item,sort){
+//	    		console.log(item,sort);
+	    		this.itemid=item;
+	    		var typeid =this.itemid;
+	    		this.Number=null;
+	    		this.Price=null;
+	    		this.Start=null;
+	    		if(sort==1){
+	    			if(this.Repaixv==0){
+	    				this.Number='desc',
+	    				this.Repaixv=1;
+	    			}else if(this.Repaixv==1){
+	    				this.Number='asc',
+	    				this.Repaixv=0;
+	    			}	
+	    		}else if(sort==2){
+	    			if(this.Jiapaixv==0){
+	    				this.Price='desc';
+	    				this.Jiapaixv=1;
+	    			}else if(this.Jiapaixv==1){
+	    				this.Price='asc';
+	    				this.Jiapaixv=0;
+	    			}
+	    		}else if(sort==3){
+	    			if(this.Shipaixv==0){
+	    				this.Start='desc';
+	    				this.Shipaixv=1;
+	    			}else if(this.Shipaixv==1){
+	    				this.Start='asc';
+	    				this.Shipaixv=0;
+	    			}
+	    		}
 	    		var token = window.localStorage.getItem("token");
-	    		var typeid = item;
 	    		var page = 1;
 	    		var that = this;
+	    		console.log(typeid,that.Number,that.Price,that.Start)
 	    		$.ajax({
 	    			type:"post",
-	    			url:join+"activity/activitytype/?activity_typeid="+typeid+"&page="+page,
+//	    			url:join+"activity/activitytype/?activity_typeid="+typeid+"&page="+page,
+					url:join+"activity/activity_list",
 	    			dataType:"json",
-	    			data:{token:token},
+	    			data:{
+	    				token:token,
+	    				style:typeid,
+	    				click_num:that.Number,
+	    				price:that.Price,
+	    				start:that.Start,
+						page:page
+	    			},
 	    			success:function(data){
 	    				page++;
-	    				that.typedata=data.info.data;
-	    				for (var i = 0; i<that.typedata.length;i++) {
-							if (that.typedata[i].faburen.length>4) {
-								that.typedata[i].faburen=that.typedata[i].faburen.substring(0,4)+"...";
-							}
-							if (that.typedata[i].tit.length>17) {
-								that.typedata[i].tit=that.typedata[i].tit.substring(0,17)+"...";
-							}
-						}
-		  				console.log("根据活动分类ID获取内容成功，长度为："+that.typedata.length+"  当前页码变为"+page);
+	    				that.typedata=data.data.data;
+	    				console.log(data.data.data);
+//	    				for (var i = 0; i<that.typedata.length;i++) {
+//							if (that.typedata[i].faburen.length>4) {
+//								that.typedata[i].faburen=that.typedata[i].faburen.substring(0,4)+"...";
+//							}
+//							if (that.typedata[i].tit.length>17) {
+//								that.typedata[i].tit=that.typedata[i].tit.substring(0,17)+"...";
+//							}
+//						}
+//		  				console.log("根据活动分类ID获取内容成功，长度为："+that.typedata.length+"  当前页码变为"+page);
 		  			},
 		  			error:function(err){
 						console.log("请求失败");
@@ -334,27 +206,34 @@
 		    				//将开关关闭
 		    				sw=false;
 		    				$.ajax({
-		    					url:join+"activity/activitytype/?activity_typeid="+typeid+"&page="+page,
+		    					url:join+"activity/activity_list",
 		    					type:"post",
-		    					data:{token:token},
+		    					data:{
+				    				token:token,
+				    				style:typeid,
+				    				click_num:that.Number,
+				    				price:that.Price,
+				    				start:that.Start,
+									page:page
+				    			},
 		    					dataType:'json',
 		    					success:function(data){
-		    						that.kak = data.info.data;
+		    						that.kak = data.data.data;
 		    						if (that.kak.length==0) {
 		    							sw=false;
 		    							return;
 		    						}else{
 		    							page++;
 		    							that.typedata=that.typedata.concat(that.kak);
-		    							for (var i = 0; i<that.typedata.length;i++) {
-											if (that.typedata[i].faburen.length>4) {
-												that.typedata[i].faburen=that.typedata[i].faburen.substring(0,4)+"...";
-											}
-											if (that.typedata[i].tit.length>17) {
-												that.typedata[i].tit=that.typedata[i].tit.substring(0,17)+"...";
-											}
-										}
-		    							console.log("根据活动分类ID获取内容分页成功，长度为："+that.kak.length+ "当前页码变为："+page+ "从长度为："+that.typedata.length);
+//		    							for (var i = 0; i<that.typedata.length;i++) {
+//											if (that.typedata[i].faburen.length>4) {
+//												that.typedata[i].faburen=that.typedata[i].faburen.substring(0,4)+"...";
+//											}
+//											if (that.typedata[i].tit.length>17) {
+//												that.typedata[i].tit=that.typedata[i].tit.substring(0,17)+"...";
+//											}
+//										}
+//		    							console.log("根据活动分类ID获取内容分页成功，长度为："+that.kak.length+ "当前页码变为："+page+ "从长度为："+that.typedata.length);
 		    							sw = true;
 		    						}
 								},
@@ -540,436 +419,10 @@
 					this.a=1;
 					return;
 	    		}
-	    	},
-	    	//综合排序
-	    	zonghe:function(){
-	    		this.main=false;
-	    		this.search=false;
-	    		this.sort=true;
-	    		this.typeshow=false;
-	    		var token = window.localStorage.getItem("token");
-	    		var that = this;
-	    		$(".shang").css("border-bottom","5px solid #999999");
-				$(".xia").css("border-top","5px solid #999999");
-				var page = 1;
-				var sort = "zonghe";
-				$.ajax({
-					type:"post",
-					url:join+"activity/sort/?page="+page,
-					dataType:"json",
-					data:{token:token,sort:sort},
-					success:function(data){
-						page++;
-						that.kajiji=data.info.data;
-						for (var i = 0; i<that.kajiji.length;i++) {
-							if (that.kajiji[i].faburen.length>4) {
-								that.kajiji[i].faburen=that.kajiji[i].faburen.substring(0,4)+"...";
-							}
-							if (that.kajiji[i].tit.length>17) {
-								that.kajiji[i].tit=that.kajiji[i].tit.substring(0,17)+"...";
-							}
-						}
-						console.log("综合排序请求成功，长度为："+that.kajiji.length+" 页码变为："+page);
-					},
-					error:function(err){
-						console.log("综合排序请求失败");
-						console.log(err);
-					}
-				});
-				//	人数升序分页
-		  		// 设置一个开关来避免重复请求数据 
-		    	let sw = true;               
-		    	// 注册scroll事件并监听     
-		    	window.addEventListener('scroll',function(){   
-		    		//获取屏幕高度
-		    		var viewHeight = $(window).height();
-		    		var scrollTop = $(window).scrollTop();
-		    		var scrollHeight = $(document).height();
-		    		
-		    		//判断是否滚动到底部
-		    		if (viewHeight+scrollTop==scrollHeight) {
-		    			if (sw==true) {
-		    				//将开关关闭
-		    				sw=false;
-		    				$.ajax({
-		    					url:join+"activity/sort/?page="+page,
-		    					type:"post",
-		    					dataType:"json",
-								data:{token:token,sort:sort},
-								success:function(data){
-									that.kak=data.info.data;
-									if (that.kak.length==0) {
-										sw=false;
-										return;
-									}else{
-										page++;
-										for (var i = 0; i<that.kak.length;i++) {
-											if (that.kak[i].faburen.length>4) {
-												that.kak[i].faburen=that.kak[i].faburen.substring(0,4)+"...";
-											}
-											if (that.kak[i].tit.length>17) {
-												that.kak[i].tit=that.kak[i].tit.substring(0,17)+"...";
-											}
-										}
-										that.kajiji=that.kajiji.concat(that.kak);
-										console.log("综合排序分页请求成功，长度为："+that.kak.length+" 总长度为："+that.kajiji.length+" 页码变为："+page);
-										sw=true;
-									}
-								},
-					  			error:function(err){
-									console.log("请求失败");
-									console.log(err);
-								}
-		    				});
-		    			}
-		    			return page;
-		    		}
-		    	});
-	    	},
-	    	//价格排序
-	    	price:function(){
-	    		this.main=false;
-	    		this.search=false;
-	    		this.sort=true;
-	    		this.typeshow=false;
-	    		var that =this;
-	    		var token=window.localStorage.getItem("token");
-	    		$(".shang").css("border-bottom","5px solid #999999");
-				$(".xia").css("border-top","5px solid #999999");
-				//价格降序
-				if (this.a==1) {
-					var page = 1;
-					var sort="pricedesc";
-					$("#jiage>.shang").css("border-bottom","5px solid #999999");
-					$("#jiage>.xia").css("border-top","5px solid #FAE74F");
-					$.ajax({
-						type:"post",
-						url:join+"activity/sort/?page="+page,
-						dataType:"json",
-						data:{sort:sort,token:token},
-						success:function(data){
-							page++;
-							that.kajiji=data.info.data;
-							for (var i = 0; i<that.kajiji.length;i++) {
-								if (that.kajiji[i].faburen.length>4) {
-									that.kajiji[i].faburen=that.kajiji[i].faburen.substring(0,4)+"...";
-								}
-								if (that.kajiji[i].tit.length>17) {
-									that.kajiji[i].tit=that.kajiji[i].tit.substring(0,17)+"...";
-								}
-							}
-							console.log("价格降序请求成功，长度为："+that.kajiji.length+" 页码为："+page);
-						},
-						error:function(err){
-							console.log("价格降序请求失败");
-						}
-					});
-					//	价格降序分页
-			  		// 设置一个开关来避免重复请求数据 
-			    	let sw = true;               
-			    	// 注册scroll事件并监听     
-			    	window.addEventListener('scroll',function(){   
-			    		//获取屏幕高度
-			    		var viewHeight = $(window).height();
-			    		var scrollTop = $(window).scrollTop();
-			    		var scrollHeight = $(document).height();
-			    		
-			    		//判断是否滚动到底部
-			    		if (viewHeight+scrollTop==scrollHeight) {
-			    			if (sw==true) {
-			    				//将开关关闭
-			    				sw=false;
-			    				$.ajax({
-			    					url:join+"activity/sort/?page="+page,
-			    					type:"post",
-			    					dataType:"json",
-									data:{token:token,sort:sort},
-									success:function(data){
-										that.kak=data.info.data;
-										if (that.kak.length==0) {
-											sw=false;
-											return;
-										}else{
-											page++;
-											for (var i = 0; i<that.kak.length;i++) {
-												if (that.kak[i].faburen.length>4) {
-													that.kak[i].faburen=that.kak[i].faburen.substring(0,4)+"...";
-												}
-												if (that.kak[i].tit.length>17) {
-													that.kak[i].tit=that.kak[i].tit.substring(0,17)+"...";
-												}
-											}
-											that.kajiji=that.kajiji.concat(that.kak);
-											console.log("价格降序分页请求成功，长度为："+that.kak.length+" 总长度为："+that.kajiji.length+" 页码变为："+page);
-											sw=true;
-										}
-									},
-						  			error:function(err){
-										console.log("请求失败");
-										console.log(err);
-									}
-				    			});
-			    			}
-			    			
-			    		}
-			    	});
-					this.a=2;
-					return;
-				}
-				//价格升序
-				if (this.a==2) {
-					var sort="priceasc";
-					var page = 1;
-					$("#jiage>.shang").css("border-bottom","5px solid #FAE74F");
-					$("#jiage>.xia").css("border-top","5px solid #999999");
-					$.ajax({
-						type:"post",
-						url:join+"activity/sort/?page="+page,
-						dataType:"json",
-						data:{sort:sort,token:token},
-						success:function(data){
-							that.kajiji=data.info.data;
-							for (var i = 0; i<that.kajiji.length;i++) {
-								if (that.kajiji[i].faburen.length>4) {
-									that.kajiji[i].faburen=that.kajiji[i].faburen.substring(0,4)+"...";
-								}
-								if (that.kajiji[i].tit.length>17) {
-									that.kajiji[i].tit=that.kajiji[i].tit.substring(0,17)+"...";
-								}
-							}
-							page++;
-							console.log("价格升序请求成功,长度为："+that.kajiji.length+" 页码变为："+page);
-						},
-						error:function(err){
-							console.log("价格降序请求失败");
-						}
-					});
-					//	价格升序分页
-			  		// 设置一个开关来避免重复请求数据 
-			    	let sw = true;               
-			    	// 注册scroll事件并监听     
-			    	window.addEventListener('scroll',function(){   
-			    		//获取屏幕高度
-			    		var viewHeight = $(window).height();
-			    		var scrollTop = $(window).scrollTop();
-			    		var scrollHeight = $(document).height();
-			    		
-			    		//判断是否滚动到底部
-			    		if (viewHeight+scrollTop==scrollHeight) {
-			    			if (sw==true) {
-			    				//将开关关闭
-			    				sw=false;
-			    				$.ajax({
-			    					url:join+"activity/sort/?page="+page,
-			    					type:"post",
-			    					dataType:"json",
-									data:{token:token,sort:sort},
-									success:function(data){
-										that.kak=data.info.data;
-										if (that.kak.length==0) {
-											sw=false;
-											return;
-										}else{
-											page++;
-											for (var i = 0; i<that.kak.length;i++) {
-												if (that.kak[i].faburen.length>4) {
-													that.kak[i].faburen=that.kak[i].faburen.substring(0,4)+"...";
-												}
-												if (that.kak[i].tit.length>17) {
-													that.kak[i].tit=that.kak[i].tit.substring(0,17)+"...";
-												}
-											}
-											that.kajiji=that.kajiji.concat(that.kak);
-											console.log("价格升序分页请求成功，长度为："+that.kak.length+" 总长度为："+that.kajiji.length+" 页码变为："+page);
-											sw=true;
-										}
-									},
-						  			error:function(err){
-										console.log("请求失败");
-										console.log(err);
-									}
-			    				});
-			    			}
-			    			return page;
-			    		}
-			    	});
-					this.a=1;
-					return;
-				}
-	    	},
-	    	//时间排序
-	    	time:function(){
-	    		this.main=false;
-	    		this.search=false;
-	    		this.sort=true;
-	    		this.typeshow=false;
-	    		var that =this;
-	    		var token=window.localStorage.getItem("token");
-	    		$(".shang").css("border-bottom","5px solid #999999");
-				$(".xia").css("border-top","5px solid #999999");
-				//时间降序
-				if(this.a==1){
-					var sort="timedesc";
-					$("#shijian>.shang").css("border-bottom","5px solid #999999");
-					$("#shijian>.xia").css("border-top","5px solid #FAE74F");
-					var page=1;
-					$.ajax({
-						type:"post",
-						url:join+"activity/sort/?page="+page,
-						dataType:"json",
-						data:{sort:sort,token:token},
-						success:function(data){
-							that.kajiji=data.info.data;
-							for (var i = 0; i<that.kajiji.length;i++) {
-								if (that.kajiji[i].faburen.length>4) {
-									that.kajiji[i].faburen=that.kajiji[i].faburen.substring(0,4)+"...";
-								}
-								if (that.kajiji[i].tit.length>17) {
-									that.kajiji[i].tit=that.kajiji[i].tit.substring(0,17)+"...";
-								}
-							}
-							page++;
-							console.log("时间降序请求成功，长度为："+that.kajiji.length+" 页码变为:"+page);
-						},
-						error:function(err){
-							console.log("时间降序请求失败");
-						}
-					});
-					//	时间降序分页
-			  		// 设置一个开关来避免重复请求数据 
-			    	let sw = true;               
-			    	// 注册scroll事件并监听     
-			    	window.addEventListener('scroll',function(){   
-			    		//获取屏幕高度
-			    		var viewHeight = $(window).height();
-			    		var scrollTop = $(window).scrollTop();
-			    		var scrollHeight = $(document).height();
-			    		
-			    		//判断是否滚动到底部
-			    		if (viewHeight+scrollTop==scrollHeight) {
-			    			if (sw==true) {
-			    				//将开关关闭
-			    				sw=false;
-			    				$.ajax({
-			    					url:join+"activity/sort/?page="+page,
-			    					type:"post",
-			    					dataType:"json",
-									data:{token:token,sort:sort},
-									success:function(data){
-										that.kak=data.info.data;
-										if (that.kak.length==0) {
-											sw=false;
-											return;
-										}else{
-											page++;
-											for (var i = 0; i<that.kak.length;i++) {
-												if (that.kak[i].faburen.length>4) {
-													that.kak[i].faburen=that.kak[i].faburen.substring(0,4)+"...";
-												}
-												if (that.kak[i].tit.length>17) {
-													that.kak[i].tit=that.kak[i].tit.substring(0,17)+"...";
-												}
-											}
-											that.kajiji=that.kajiji.concat(that.kak);
-											console.log("时间降序分页请求成功，长度为："+that.kak.length+" 总长度为："+that.kajiji.length+" 页码变为："+page);
-											sw=true;
-										}
-									},
-						  			error:function(err){
-										console.log("请求失败");
-										console.log(err);
-									}
-			    				});
-			    			}
-			    		}
-			    	});
-					this.a=2;
-					return;
-				}
-				//时间升序
-				if (this.a==2) {
-					var sort = "timeasc";
-					$("#shijian>.shang").css("border-bottom","5px solid #FAE74F");
-					$("#shijian>.xia").css("border-top","5px solid #999999");
-					var page=1;
-					$.ajax({
-						type:"post",
-						url:join+"activity/sort/?page="+page,
-						dataType:"json",
-						data:{sort:sort,token:token},
-						success:function(data){
-							that.kajiji=data.info.data;
-							for (var i = 0; i<that.kajiji.length;i++) {
-								if (that.kajiji[i].faburen.length>4) {
-									that.kajiji[i].faburen=that.kajiji[i].faburen.substring(0,4)+"...";
-								}
-								if (that.kajiji[i].tit.length>17) {
-									that.kajiji[i].tit=that.kajiji[i].tit.substring(0,17)+"...";
-								}
-							}
-							page++;
-							console.log("时间升序请求成功,长度为："+that.kajiji.length+" 页码变为："+page);
-						},
-						error:function(err){
-							console.log("时间升序请求失败");
-						}
-					});
-					//	时间升序分页
-			  		// 设置一个开关来避免重复请求数据 
-			    	let sw = true;               
-			    	// 注册scroll事件并监听     
-			    	window.addEventListener('scroll',function(){   
-			    		//获取屏幕高度
-			    		var viewHeight = $(window).height();
-			    		var scrollTop = $(window).scrollTop();
-			    		var scrollHeight = $(document).height();
-			    		
-			    		//判断是否滚动到底部
-			    		if (viewHeight+scrollTop==scrollHeight) {
-			    			if (sw==true) {
-			    				//将开关关闭
-			    				sw=false;
-			    				$.ajax({
-			    					url:join+"activity/sort/?page="+page,
-			    					type:"post",
-			    					dataType:"json",
-									data:{token:token,sort:sort},
-									success:function(data){
-										that.kak=data.info.data;
-										if (that.kak.length==0) {
-											sw=false;
-											return;
-										}else{
-											page++;
-											for (var i = 0; i<that.kak.length;i++) {
-
-												if (that.kak[i].faburen.length>4) {
-													that.kak[i].faburen=that.kak[i].faburen.substring(0,4)+"...";
-												}
-												if (that.kak[i].tit.length>17) {
-													that.kak[i].tit=that.kak[i].tit.substring(0,17)+"...";
-												}
-											}
-											that.kajiji=that.kajiji.concat(that.kak);
-											console.log("时间升序分页请求成功，长度为："+that.kak.length+" 总长度为："+that.kajiji.length+" 页码变为："+page);
-											sw=true;
-										}
-									},
-						  			error:function(err){
-										console.log("请求失败");
-										console.log(err);
-									}
-			    				});
-			    			}
-			    			return page;
-			    		}
-			    	});
-					this.a=1;
-					return;
-				}
 	    	}
 	    },
 	    mounted(){
+	    	this.imgUrl=imgJoin;
 	    	var token = window.localStorage.getItem("token");
 	    	if(!token){
 	    		window.location.href="#/login";
@@ -998,10 +451,12 @@
 			this.$nextTick(()=>{
 				//首页跳转传递参数
 				if(this.$route.query.index+1){
-					this.type(this.$route.query.id,this.$route.query.index)
+					this.type(this.$route.query.id,0);
+					this.changefoucs(this.$route.query.index);
 				}else{
 					//自动调用全部分类获取内容
-					this.all();
+					this.type(0,0);
+					
 				}
 			})
 	    }
@@ -1024,6 +479,10 @@
 	}
 	li{
 		list-style: none;
+	}
+	/*排序指示箭头*/
+	.activity .shang.active{
+		border-bottom-color: #FAE64F;
 	}
 	.activity_ms{
 		width: 100%;

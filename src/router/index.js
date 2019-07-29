@@ -114,6 +114,11 @@ import voucher from '@/components/voucher'
 //邀请码
 import invitation from '@/components/invitation'
 import dry from '@/components/dry'
+//首页更多活动
+import homeMoreActivities from '@/components/homeMoreActivities'
+//首页更多企业
+import homeMoreCompanies from '@/components/homeMoreCompanies'
+
 
 Vue.use(Router)
 
@@ -470,6 +475,19 @@ export default new Router({
       path: '/invitation',
       name: 'invitation',
       component: invitation
-    }
+    },
+//  首页查看更多活动
+		{
+      path: '/homeMoreActivities',
+      name: 'homeMoreActivities',
+      component: homeMoreActivities
+    },
+    //  首页查看更多企业
+		{
+      path: '/homeMoreCompanies',
+      name: 'homeMoreCompanies',
+      component: homeMoreCompanies
+    },
+    
   ]
 })

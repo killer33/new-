@@ -118,6 +118,9 @@
 	              		<i class="iconfont right">&#xe61f;</i>
 	             	</p>
 	          	</router-link>
+	          	<li @click="logout">
+	          		<p><span>退出登录</span></p> 
+	          	</li>
 	      	</ul>
       	</div>
       	<div class="lk"></div>
@@ -192,6 +195,28 @@
 						console.log("请求失败");
 					}
 				});
+			},
+			//退出登录
+			logout(){
+				var token = window.localStorage.getItem("token");
+				var that=this;
+				$.ajax({
+					type:"post",
+					url:join+"user/rm_cache",
+					dataType:"json",
+					data:{token:token},
+					success:function(data){
+						window.localStorage.removeItem("token");
+						that.$router.push({ path:"/login"});
+					},
+					error:function(err){
+						console.log("请求失败");
+					}
+				});
+				
+
+				
+				
 			}
 		},
 		mounted(){
@@ -219,7 +244,7 @@
 						data:{token:token},
 						success:function(data){
 //							console.log("请求成功");
-//							console.log(data);
+							console.log(data);
 							switch(data.type){
 								case 0:that.isCe=0; 
 									break;

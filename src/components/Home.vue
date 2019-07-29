@@ -30,13 +30,6 @@
 						<p>{{item.company_type}}</p>
 						<router-link :to="{path:'/enterprise',query:{index:index,id:item.id}}" tag="a"></router-link>
 					</li>
-					<!--<li><div><img src="../../img/qinzi.png"/></div><p>亲子</p></li>
-					<li><div><img src="../../img/huodong.png"/></div><p>旅游</p></li>
-					<li><div><img src="../../img/jinrong.png"/></div><p>金融</p></li>
-					<li><div><img src="../../img/wenyi.png"/></div><p>文艺</p></li>
-					<li><div><img src="../../build/mazda.jpg"/></div><p>IT</p></li>
-					<li><div><img src="../../img/jianshen.png"/></div><p>健身</p></li>
-					<li><div><img src="../../img/peixun.png"/></div><p>培训</p></li>-->
 				</ul>
 			</div>
 		  </van-swipe-item>
@@ -50,13 +43,6 @@
 						<p>{{item.activity_type}}</p>
 						<router-link :to="{path:'/activity',query:{index:index,id:item.id}}" tag="a"></router-link>
 					</li>
-					<!--<li><div><img src="../../img/qinzi.png"/></div><p>亲子</p></li>
-					<li><div><img src="../../img/huodong.png"/></div><p>旅游</p></li>
-					<li><div><img src="../../img/jinrong.png"/></div><p>金融</p></li>
-					<li><div><img src="../../img/wenyi.png"/></div><p>文艺</p></li>
-					<li><div><img src="../../build/mazda.jpg"/></div><p>IT</p></li>
-					<li><div><img src="../../img/jianshen.png"/></div><p>健身</p></li>
-					<li><div><img src="../../img/peixun.png"/></div><p>培训</p></li>-->
 				</ul>
 			</div>
 		  </van-swipe-item>
@@ -65,23 +51,26 @@
 		<!--猜你喜欢-->
 		<div class="guesslove">
 			<p><router-link to="" tag="span">猜你喜欢</router-link>
-				<router-link to="/moreActivities" tag="span">查看更多 <i class="iconfont">&#xe61f;</i></router-link>
+				<router-link  @click.native="refresh" to="/homeMoreActivities" tag="span" v-show="hasMoreActivity">查看更多 <i class="iconfont">&#xe61f;</i></router-link>
 			</p>
-			<div class="love">
+			<div class="love" v-show="hasactivity">
 				<ul>
-					<router-link to="/buy" tag="li">
-						<img src="../../build/27.jpg"/>
-						<p class="Ph1"><span>{豌豆思维}</span>数学体验课欢迎<br />参与</p>
-						<p class="Ph2">4月16日  8:00 开始  <span>北京</span></p>
+					<router-link to="/buy" tag="li" v-for="(item,index) in gussActivity" :key="index">
+						<img :src="imgUrl+item.pic"/>
+						<p class="Ph1"><span>{豌豆思维}</span>{{item.tit}}</p>
+						<p class="Ph2">{{parseInt(item.start) | datetimeFilter}}<span>{{item.address}}</span></p>
 					</router-link>
 				</ul>
+			</div>
+			<div class="EmptyAcLi" v-show="!hasactivity">
+				<p class="EmptyAc">———————— &nbsp;空空如也！&nbsp;  ————————</p>
 			</div>
 		</div>
 		<hr />
 		<!--推荐企业-->
 		<div class="tjqy">
 				<p><router-link to="" tag="span" >推荐企业</router-link>
-					<router-link @click.native="refresh" to="/moreCompanies" tag="span" v-show="hasMorecompany">查看更多<i class="iconfont">&#xe61f;</i></router-link>
+					<router-link  @click.native="refresh" to="/homeMoreCompanies" tag="span" v-show="hasMorecompany">查看更多<i class="iconfont">&#xe61f;</i></router-link>
 				</p>
 			<div class="tj" v-show="hasTuicompany">
 				<ul>
@@ -146,8 +135,11 @@
 			    enterclassc:[],
 			    activityclassc:[],
 			    imgUrl:'',
-			    Reccompany:[],
-			    hasfollow:false,
+			    gussActivity:[],//猜你喜欢
+			    Reccompany:[],//推荐企业
+			    hasfollow:false,//是否出现关注
+				hasactivity:false,//是否有猜你喜欢活动
+		  		hasMoreActivity:false,//是否有四条以上有活动
 			    hasTuicompany:false,//是否有推荐企业
 			    hasMorecompany:false,//是否有更多推荐企业
 			    
@@ -226,7 +218,7 @@
 					dataType:"json",
 					data:{},
 					success:function(data){
-						console.log(data);
+//						console.log(data);
 //						for(var i=0;i<data.data.length;i++){
 //							that.images.push(imgJoin+data.data[i].banner);
 //						}
@@ -262,6 +254,32 @@
 						console.log("请求失败");
 					}
 				});
+				//猜你喜欢
+				$.ajax({
+					type:"post",
+					url:join+"index/love_activity",
+					dataType:"json",
+					data:{},
+					success:function(data){
+//						console.log(data);
+						that.gussActivity=data.data;
+						//判断活动
+						if(that.gussActivity.length==0){
+							that.hasactivity=false;
+							that.hasMoreActivity=false;
+						}else if(that.gussActivity.length<=4){
+							that.hasactivity=true;
+							that.hasMoreActivity=false;
+						}else if(that.gussActivity.length>4){
+							that.hasactivity=true;
+							that.hasMoreActivity=true;
+							that.gussActivity=that.gussActivity.splice(0,4);
+						}
+					},
+					error:function(err){
+						console.log("请求失败");
+					}
+				});
 				//推荐企业
 				$.ajax({
 					type:"post",
@@ -269,7 +287,7 @@
 					dataType:"json",
 					data:{},
 					success:function(data){
-						console.log(data);
+//						console.log(data);
 						that.Reccompany=data.data;
 						if(data.uid){
 							that.hasfollow=true;
@@ -446,7 +464,7 @@
 	/*猜你喜欢*/
 	.guesslove{
 		width: 100%;
-		height: 31rem;
+/*		height: 31rem;*/
 	}
 	.guesslove>p{
 		width: 100%;
@@ -493,6 +511,11 @@
 	}
 	.Ph1>span{
 		font-weight: bold;
+/*		display: inline-block;*/
+		width: 40%;
+		overflow: hidden;
+	    white-space: nowrap;
+	    text-overflow: ellipsis;
 	}
 	.Ph2{
 		color: #A1A1A1;

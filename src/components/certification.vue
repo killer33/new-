@@ -535,7 +535,7 @@
 	.first{
 	  color:#B9B9B9;
 	}
-	.content p{
+	.certification .content p{
 	    position: absolute;
 	    right: 1%;
 	    bottom: -14%;
@@ -676,7 +676,7 @@
 		height: 6rem;
 		background: #F0F0F0;
 	}
-	.release{
+	.certification .release{
 		width: 80%;
 		margin: auto;
 		height: 3.5rem;

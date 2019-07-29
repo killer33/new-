@@ -159,7 +159,7 @@
 	.first{
 	  color:#B9B9B9;
 	}
-	.content p{
+	.Not_real .content p{
 	    position: absolute;
 	    right: 1%;
 	    bottom: -14%;
