@@ -3,54 +3,71 @@
   <div class="certification">
   	<div class="h">
   		<img src="../../build/27.jpg"/>
-        <router-link to="/Release_1" tag="p" class="huiqu" @click.native="flushCom"><i class="iconfont">&#xe646;</i></router-link>
+        <p to="/Release_1" class="huiqu" @click="back"><i class="iconfont">&#xe646;</i></router-link>
         <p class="white">发布活动</p>
     </div>
     <div class="margleft_box">
     	<div class="margleft">
 		    <p class="theme">
 		       <span class="headline">活动主题</span>
-		       <input type="text" placeholder="请输入活动标题" class="textline" v-model="subdata.title">
+		       <input type="text" placeholder="请输入活动标题" class="textline" v-model="subdata.tit">
 		       <span><span class="num2">0</span>/20</span>
 		    </p>
 		   <!-- 文字输入区 -->
 		   	<div class="content">
-				<textarea name="" id="textarea"  placeholder="请描述您的活动" v-model="subdata.desActivity"></textarea>
+				<textarea name="" id="textarea"  placeholder="请描述您的活动" v-model="subdata.details"></textarea>
 			    <p>
 			       	<span class="num">0</span>
 			       	<span class="first">/300</span>
 			    </p>
 		    </div>
-			<div class="uploadx1">
+			<!--<div class="uploadx1">
 				<li class="upup">
 					<img id="ypic" src="../../build/upup.png" />
 					<img id="xpic" src="" />
 					<input type="file" name="file" id="file" value="" accept="image/*" multiple  @change="uppp"/>
 				</li>
+			</div>-->
+			<div class="upload">
+					<el-upload
+						action="http://nvchuanghui.com/public/index.php/index/user/upload"  
+						list-type="picture-card"
+						:limit="3"
+						:data="upLoadData"
+						name = "file"
+						accept=".jpg,.png,.jpeg,tif"
+						:on-preview="handlePictureCardPreview"
+						:on-success="success"
+						:on-remove="handleRemove">
+					  	<i class="el-icon-plus"></i>
+					</el-upload>
+					<el-dialog :visible.sync="dialogVisible" size="tiny" >
+						<img width="100%" :src="dialogImageUrl" alt="">
+					</el-dialog>
 			</div>
 		</div>
     </div>
 	<div class="fb_box">
 		<div class="fb">
 			<ul>
-				<li @click="showExpense()">
-					<p>活动费用</p><input type="text" name="" id="" value="" placeholder="请填写具体费用信息"/>
+				<router-link to="" tag="li" class="Time_">
+					<p>活动开始时间</p><p >{{parseInt(subdata.start) | datetimeFilter}}</p><i class="iconfont">&#xe61f;</i>
+				</router-link>
+				<router-link to="" tag="li" class="Time_1">
+					<p>活动结束时间</p><p >{{parseInt(subdata.end) | datetimeFilter}}</p><i class="iconfont">&#xe61f;</i>
+				</router-link>
+				<li @click="showBuyhurry()">
+					<p><span class="star">*</span>抢购详细内容</p><p v-html="pintuan"></p><i class="iconfont">&#xe61f;</i>
 				</li>
-				<li class="Time_">
-					<p>活动开始时间</p><p v-html='dates'></p><i class="iconfont">&#xe61f;</i>
-				</li>
-				<li class="Time_1">
-					<p>活动结束时间</p><p v-html='dates1'></p><i class="iconfont">&#xe61f;</i>
-				</li>
-				<li class="Address_">
+				<router-link to="" tag="li" class="Address_">
 					<p>活动地址</p><p v-html='dates2'></p><i class="iconfont">&#xe61f;</i>
-				</li>
-				<li>
-					<p>详细地址</p><input v-model="subdata.address" type="text" name="" id="" value="" placeholder="请填写活动具体地址"/>
-				</li>
-				<li>
+				</router-link>
+				<router-link to="" tag="li">
+					<p>详细地址</p><input v-model="subdata.address_info" type="text" name="" id="" value="" placeholder="请填写活动具体地址"/>
+				</router-link>
+				<!--<router-link to="" tag="li">
 					<p>活动人数</p><input v-model="subdata.number" type="text" name="" id="" value="" placeholder="请填写活动人数"/>
-				</li>
+				</router-link>-->
 				<li>
 					<p>活动方式</p>
 					<!--<div class="Outer_ring"><p class="check"></p></div><span class="online">线上</span>
@@ -63,17 +80,17 @@
 				<li @click="showSelect">
 					<p>活动类型</p><p>IT互联网</p><i class="iconfont">&#xe61f;</i>
 				</li>
-				<li>
+				<!--<router-link to="" tag="li">
 					<p>开启报名</p>
 		          	<el-switch
 						v-model="value"
 						active-color="#FAE64F"
 						inactive-color="#F0F0F0">
 					</el-switch>
-				</li>
+				</router-link>
 				<li @click="showEnterprise()">
 					<p>报名信息</p><input type="text" name="" id="" value="" placeholder="请填写具体报名信息"/>
-				</li>
+				</li>-->
 				<li @click="showEnter()">
 					<p>企业信息</p><input type="text" name="" id="" value="" placeholder="请填写具体企业信息"/>
 				</li>
@@ -139,7 +156,12 @@
 	</van-popup>
 	<!--企业信息弹出-->
 	<van-popup class='regUp' v-model="showEn" position="right" :close-on-click-overlay="true" :overlay="true">
-	  <enterpriseSignup :showEnter="showEnter"></enterpriseSignup>
+	  <enterpriseSignup :showEnter="showEnter" :subdata="subdata"></enterpriseSignup>
+	</van-popup>
+	
+	<!--抢购信息弹出-->
+    <van-popup class='regUp' v-model="showBuy" position="right" :close-on-click-overlay="true" :overlay="true">
+	  <buyhurry :showBuyhurry="showBuyhurry" :subdata="subdata"></buyhurry>
 	</van-popup>
 	
 	<!--选择分类-->
@@ -153,12 +175,12 @@
 <script>
 	import { DatetimePicker,Area,Popup } from 'vant';
 	import areaList from '../../node_modules/vant/packages/area/demo/area.js'
-	//费用子组件
-	import expense from './expense'
 	//引入报名信息子组件
 	import registration_information from './registration_information'
 	//企业信息组件
 	import enterpriseSignup from './enterpriseSignup'
+	//抢购信息子组件
+	import buyhurry from './buyHurry'
 	//分类子组件
 	import selectionsort from './selectionsort'
 	
@@ -167,21 +189,35 @@
 		components:{
 	    	[DatetimePicker.name]:DatetimePicker,
 	    	registration:registration_information,
-	    	expense:expense,
 	    	enterpriseSignup:enterpriseSignup,
+	    	buyhurry:buyhurry,
 	    	selectionsort:selectionsort
 	  	},
 		data() {
 		    return {
+		    	//描述图片相关
+		    	dialogImageUrl: '',
+		       	dialogVisible: false,
+		    	upLoadData: {
+			        token: ''
+			    },
 		      subdata:{
-		      	title:'',
-		      	desActivity:'',//描述活动
-		      	dates:'',//活动开始时间时间戳
-			    dates1:'',//活动结束时间时间戳
-			    dates2:'',//活动地址
-			    address:'',//活动详细地址
-			    number:'',//活动人数
-			    mode:'', //活动类型
+		      	tit:'',
+		      	img:[],
+		      	details:'',//描述活动
+		      	start:'',//活动开始时间时间戳
+			    end:'',//活动结束时间时间戳
+			   	//抢购详细内容
+			    num:'',//抢购人数
+			   	price:'',//抢购费用
+			    hurryStart:'',//抢购开始
+			    hurryEnd:'',//抢购结束
+			    address:'',//活动地址
+			    address_info:'',//活动详细地址
+//			    number:'',//活动人数
+			    mode:'', //活动方式 
+			    company_zi_phone:'',//企业咨询电话
+			    company_fu_phone:'',//企业服务电话
 			    
 		      },
 		      dates:'请选择',//活动开始时间请选择
@@ -189,7 +225,7 @@
 			  dates2:'请选择',//活动地址请选择
 		      minHour: 10,
 		      maxHour: 20,
-		      minDate: new Date(2019,5,26),
+		      minDate: new Date(),
 		      maxDate: new Date(2020,7,7),
 		      currentDate: new Date(),
 		      areaList:areaList,
@@ -202,11 +238,12 @@
 		      showBuy:false,
 		      showCol:false,
 		      showSel:false,
-		      showReal:false
+		      showReal:false,
 		    };
 		},
 		mounted(){
 			var token = window.localStorage.getItem("token");
+			this.upLoadData.token=token;
 	    	if(!token){
 	    		window.location.href="#/login";
 	    	}
@@ -214,15 +251,23 @@
 	  			var that=this;
 	  			$.ajax({
 	  				type:"post",
-	  				url:join+"activity/activityAdd",
+	  				url:join+"activity/activityShow",
 	  				dataType:"json",
 	  				data:{token:token,style:1},
 	  				success:function(data){
 	  					console.log(data);
-	  					if(data.ret==0){
+//	  					that.dates=data.data.start;
+//	  					that.dates1=data.data.end;
+	  					if(data.status==0){
 	  						that.showReal=true;
 	  					}else{
 	  						that.showReal=false;
+	  						that.subdata=data.data;
+	  						that.subdata.style=1;
+	  						if(data.data.address!=''){
+	  							that.dates2=data.data.address
+	  						}
+	  						
 	  					}
 	  				},
 		  			error:function(err){
@@ -232,37 +277,76 @@
 	  		})
 	  	},
 		methods:{
+			//返回/存草稿
+			back(){
+				var token = window.localStorage.getItem("token");
+				var that=this;
+				console.log(that.subdata);
+				$.ajax({
+					type:"post",
+	  				url:join+"activity/activitySave",
+	  				dataType:"json",
+	  				data:{
+	  					token:token,
+	  					data:that.subdata
+	  				},
+	  				success:function(data){
+	  					console.log(data);
+	  				},
+	  				error:function(err){
+	  					console.log(err);
+	  				}
+				})
+			},
 			//发布活动
 			Release(){
 				console.log(this.subdata);
+				var token = window.localStorage.getItem("token");
+				var that=this;
+				console.log(that.subdata);
+				$.ajax({
+					type:"post",
+	  				url:join+"activity/activityAdd",
+	  				dataType:"json",
+	  				data:{
+	  					token:token,
+	  					data:that.subdata,
+	  				},
+	  				success:function(data){
+	  					console.log(data);
+	  				},
+	  				error:function(err){
+	  					console.log(err);
+	  				}
+				})
 			},
 			flushCom:function(){
 				this.$router.go(0); 
 			},
-			//上传图片
-			uppp:function(e){
-                var that=this;
-                var file = e.target.files[0];
-                var imgSize=file.size/1024;
-                if(imgSize>800){
-                    alert('请上传大小不要超过800KB的图片')
-                }else{
-                    var reader = new FileReader();
-                    reader.readAsDataURL(file); // 读出 base64
-                    reader.onloadend = function () {
-                        // 图片的 base64 格式, 可以直接当成 img 的 src 属性值        
-                        var dataURL = reader.result;
-                        
-                        $("#xpic").attr("src", dataURL);
-						$("#ypic").next().hide();
-						
-						$(function(){
-							$("#xpic").show();
-							$("#ypic").hide();
-						})
-                    };
-                }
-            },
+//			//上传图片
+//			uppp:function(e){
+//              var that=this;
+//              var file = e.target.files[0];
+//              var imgSize=file.size/1024;
+//              if(imgSize>800){
+//                  alert('请上传大小不要超过800KB的图片')
+//              }else{
+//                  var reader = new FileReader();
+//                  reader.readAsDataURL(file); // 读出 base64
+//                  reader.onloadend = function () {
+//                      // 图片的 base64 格式, 可以直接当成 img 的 src 属性值        
+//                      var dataURL = reader.result;
+//                      
+//                      $("#xpic").attr("src", dataURL);
+//						$("#ypic").next().hide();
+//						
+//						$(function(){
+//							$("#xpic").show();
+//							$("#ypic").hide();
+//						})
+//                  };
+//              }
+//          },
 //          活动开始时间确定按钮
             con:function(){
             	var d=this.currentDate;//获取数列当前时间
@@ -291,7 +375,7 @@
 	    		$(".Time_choose1").hide();
 	    		var start_time=new Date(d).getTime();//活动开始时间--时间戳
 //	    		console.log(start_time);
-	    		this.subdata.dates=start_time;
+	    		this.subdata.start=start_time;
             },
 //          活动结束时间确定按钮
             end:function(){
@@ -321,7 +405,7 @@
 	    		$(".Time_choose1").hide();
 	    		var end_time1=new Date(d).getTime();//活动结束时间--时间戳
 //	    		console.log(end_time1);
-	    		this.subdata.dates1=end_time1;
+	    		this.subdata.end=end_time1;
             },
             //地址选择
             //地址选择确定按钮
@@ -334,7 +418,7 @@
             	$(".Address_selection").hide();
             	$(".maskd").hide();
             	this.dates2=province_city;
-            	this.subdata.dates2=province_city;
+            	this.subdata.address=province_city;
             },
             //地址选择取消按钮
             cancel:function(){
@@ -400,7 +484,35 @@
             		this.showReal=false;
             		this.$router.push({path:'/Release_1'});
             	}
-            }
+            },
+            //上传图片
+           	handleRemove(file, fileList) {
+//         		console.log(file);
+//	        	console.log(fileList);
+	      		var imglist=[];
+				var item;
+				for(item of fileList){
+					imglist.push(item.response.info)
+				}
+				this.subdata.img=imglist;
+//	      		console.log(this.subdata.img);
+	     	},
+	      	handlePictureCardPreview(file) {
+	        	this.dialogImageUrl = file.url;
+	        	this.dialogVisible = true;
+	      	},
+	      	success(response, file, fileList) {
+	      		var that = this;
+	      		var info = response.info;
+	      		var imglist=[];
+//	      		that.subdata.img.push(info);
+				var item;
+				for(item of fileList){
+					imglist.push(item.response.info)
+				}
+				that.subdata.img=imglist;
+//	      		console.log(that.subdata.img);
+	      	},
 				
            
 		}
@@ -683,6 +795,10 @@
 	.fb .star{
 		color: #FAE64F;
 	}
+	/*线上线下选择*/
+	.el-radio-group{
+		margin-left: 9%;
+	}
 	.el-switch{
         display: inline-block;
 	    position: relative;
@@ -748,10 +864,10 @@
 		position: relative;
 		top: 20%;
 	}
-	.certification .Time_choose{
+	.Time_choose{
 		display: none;
 	}
-	.certification .Time_choose1{
+	.Time_choose1{
 		display: none;
 	}
 	.Address_selection{
@@ -783,10 +899,10 @@
 		width: 100%;
 		
 	}
-	.certification .Time_choose .van-picker__toolbar{
+	.Time_choose .van-picker__toolbar{
 		display: none;
 	}
-	.certification .Time_choose1 .van-picker__toolbar{
+	.Time_choose1 .van-picker__toolbar{
 		display: none;
 	}
 	.Time_choose>p{
@@ -926,6 +1042,96 @@
 	    font-size: 1.6rem;
 	    background: #FAE64F;
 	    margin-top: 14%;	
+	}
+	/*描述图片*/
+	.upload{
+    	width: 94%;
+/*    	margin: auto;*/
+		background: white;
+		border-radius: 0 0 0.5rem 0.5rem;
+	}
+	.el-upload-list--picture-card .el-upload-list__item{
+		overflow: hidden;
+	    background-color: #fff;
+	    border: 0.1rem solid #c0ccda;
+	    border-radius: 0.6rem;
+	    -webkit-box-sizing: border-box;
+	    box-sizing: border-box;
+	    width: 8rem;
+	    height: 8rem;
+	    margin: 0.5rem 0.5rem 0.5rem 0.5rem;
+	    display: inline-block;
+	    margin-left: 1rem;
+	}
+	.el-upload--picture-card{
+		background-color: #fbfdff;
+	    border: 0.1rem dashed #c0ccda;
+	    border-radius: 0.6rem;
+	    -webkit-box-sizing: border-box;
+	    box-sizing: border-box;
+	    width: 8rem;
+	    height: 8rem;
+	    line-height: 8.5rem;
+	    vertical-align: top;
+	    margin-top: 0.5rem;
+	    margin-bottom: 0.8rem;
+	    margin-left: 1rem;
+	}
+	
+	
+	.el-message-box--center {
+	    padding-bottom: 30px;
+	}
+	.el-message-box{
+		display: inline-block;
+	    width: 290px;
+	    padding-bottom: 10px;
+	    vertical-align: middle;
+	    background-color: #FFF;
+	    border-radius: 4px;
+	    border: 1px solid #EBEEF5;
+	    font-size: 18px;
+	    -webkit-box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
+	    box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
+	    text-align: left;
+	    overflow: hidden;
+	    -webkit-backface-visibility: hidden;
+	    backface-visibility: hidden;
+	}
+	.el-message-box--center .el-message-box__header {
+	    padding-top: 30px;
+	}
+	.el-message-box__header {
+	    position: relative;
+	    padding: 15px 15px 10px;
+	}
+	.el-message-box--center .el-message-box__content {
+	    padding-left: 27px;
+	    padding-right: 27px;
+	}
+	
+	.el-message-box--center .el-message-box__btns, .el-message-box--center .el-message-box__content {
+	    text-align: center;
+	}
+	.el-message-box__content {
+	    position: relative;
+	    padding: 10px 15px;
+	    color: #606266;
+	    font-size: 14px;
+	}
+	
+
+	.el-message-box__btns {
+	    padding: 5px 15px 0;
+	    text-align: right;
+	}
+	
+	.el-message-box__wrapper::after {
+	    content: "";
+	    display: inline-block;
+	    height: 100%;
+	    width: 0;
+	    vertical-align: middle;
 	}
  </style>
  

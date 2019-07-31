@@ -2,26 +2,26 @@
 	<!--活动-->
 	<div class="activity">
 		<div class="heads1">
-			<i class="iconfont search1" @click="">&#xe615;</i>
-			<input type="text" name="" id="activity_search" value="" placeholder="搜索您感兴趣的公司"/>
+			<i class="iconfont search1" @click="type(0,0,title),changefoucs(-1),hideSearch()">&#xe615;</i>
+			<input class="search_input" v-model="title" type="text" @click="searchActivity" id="activity_search" value="" placeholder="搜索您感兴趣的活动"/>
 		</div>
 		<div class="A_nav">
 			<ul >
-				<li :class="{'ss':clicked==-1}" @click="type(0,0),changefoucs(-1)">全部</li>
-				<li v-for="(item,index) in info" :key="index" :class="{'ss':clicked==index}" @click="type(item.id,0),changefoucs(index,0)">{{item.activity_type}}</li>
+				<li :class="{'ss':clicked==-1}" @click="type(0,0,null),changefoucs(-1)">全部</li>
+				<li v-for="(item,index) in info" :key="index" :class="{'ss':clicked==index}" @click="type(item.id,0,null),changefoucs(index)">{{item.activity_type}}</li>
 			</ul>
 		</div>
 		<div class="screening">
 			<ul>
-				<li class="jjs" @click="type(itemid,0)">综合</li>
-				<li id="renshu" @click="type(itemid,1)">人数
+				<li class="jjs" @click="type(itemid,0,null)" :class="{'active-sort':sortid==0}">综合</li>
+				<li id="renshu" @click="type(itemid,1,null)" :class="{'active-sort':sortid==1}">人数
 					<div class="shang" :class='{"active":Number=="asc"}'></div>
 					<div class="xia" :class="{'active':Number=='desc'}"></div>
 				</li>
-				<li id="jiage" @click="type(itemid,2)">价格
+				<li id="jiage" @click="type(itemid,2,null)" :class="{'active-sort':sortid==2}">价格
 					<div class="shang"></div>
 					<div class="xia"></div></li>
-				<li id="shijian" @click="type(itemid,3)">时间
+				<li id="shijian" @click="type(itemid,3,null)" :class="{'active-sort':sortid==3}">时间
 					<div class="shang"></div>
 					<div class="xia"></div>
 				</li>
@@ -48,10 +48,13 @@
 			<!--活动分类id内容-->
 			<ul>
 				<router-link to="/activityIntroduction" tag="li" v-for="item in typedata">
-					<img :src="imgUrl+item.pic"/>
+					<img :src="item.pic"/>
 					<p class="Ph11"><span>{<span>{{item.faburen}}</span>}</span>{{item.tit}}</p>
 					<p class="Ph22"><span>{{parseInt(item.start) | datetimeFilter}}</span> 开始  <span>{{item.address}}</span></p>
 				</router-link>
+				<li class="EmptyAcLi" v-show="!hasTuicompany">
+					<p class="EmptyAc">———————— &nbsp;暂无活动&nbsp;  ————————</p>
+				</li>
 			</ul>
 			<!--排序-->
 			<!--<ul v-show="sort">
@@ -63,7 +66,8 @@
 			</ul>-->
 			<div style="clear: both;"></div>
 		</div>
-		<div class="activity_ms"></div>
+<!--		<div class="activity_ms"></div>-->
+		<div class="activityMask" @click="hideSearch"></div>
 		<!--底部-->
 		<div class="footer">
 			<ul>
@@ -106,7 +110,6 @@
 	    		info:[],     //活动分类
 	    		typedata:[],    //活动分类id内容获取-- 分页
 	    		kajiji:[],   //排序
-	    		a:1,
 	    		Number:null, //人数排序
 	    		Price:null,//价格排序
 	    		Start:null,//时间排序
@@ -114,7 +117,10 @@
 	    		Jiapaixv:0,	//价格排序点击次数
 	    		Shipaixv:0,	//时间排序点击次数
 	    		itemid:0,//itemid
-	    		
+	    		sortid:0,//sortid
+	    		hasTuicompany:false,//是否有活动
+	    		se:0,//搜索开关
+	    		title:null,//搜索标题
 	    	}
 	    },
 	    methods:{
@@ -122,13 +128,15 @@
 	    		this.clicked = index;
 	    	},
 	    	//获取活动分类ID--获取分页数据
-	    	type:function(item,sort){
+	    	type:function(item,sort,tit){
 //	    		console.log(item,sort);
 	    		this.itemid=item;
+	    		this.sortid=sort;
 	    		var typeid =this.itemid;
 	    		this.Number=null;
 	    		this.Price=null;
 	    		this.Start=null;
+	    		this.title=tit;
 	    		if(sort==1){
 	    			if(this.Repaixv==0){
 	    				this.Number='desc',
@@ -157,7 +165,7 @@
 	    		var token = window.localStorage.getItem("token");
 	    		var page = 1;
 	    		var that = this;
-	    		console.log(typeid,that.Number,that.Price,that.Start)
+	    		console.log(typeid,that.Number,that.Price,that.Start,tit);
 	    		$.ajax({
 	    			type:"post",
 //	    			url:join+"activity/activitytype/?activity_typeid="+typeid+"&page="+page,
@@ -165,16 +173,18 @@
 	    			dataType:"json",
 	    			data:{
 	    				token:token,
-	    				style:typeid,
+	    				activity_typeid:typeid,
 	    				click_num:that.Number,
 	    				price:that.Price,
 	    				start:that.Start,
+	    				tit:tit,
 						page:page
 	    			},
 	    			success:function(data){
 	    				page++;
-	    				that.typedata=data.data.data;
-	    				console.log(data.data.data);
+	    				console.log(data);
+	    				that.typedata=data.data.data; 
+
 //	    				for (var i = 0; i<that.typedata.length;i++) {
 //							if (that.typedata[i].faburen.length>4) {
 //								that.typedata[i].faburen=that.typedata[i].faburen.substring(0,4)+"...";
@@ -184,6 +194,11 @@
 //							}
 //						}
 //		  				console.log("根据活动分类ID获取内容成功，长度为："+that.typedata.length+"  当前页码变为"+page);
+						if(that.typedata.length==0){
+							that.hasTuicompany=false;
+						}else{
+							that.hasTuicompany=true;
+						}
 		  			},
 		  			error:function(err){
 						console.log("请求失败");
@@ -210,10 +225,11 @@
 		    					type:"post",
 		    					data:{
 				    				token:token,
-				    				style:typeid,
+				    				activity_typeid:typeid,
 				    				click_num:that.Number,
 				    				price:that.Price,
 				    				start:that.Start,
+				    				tit:tit,
 									page:page
 				    			},
 		    					dataType:'json',
@@ -245,6 +261,24 @@
 		    			
 		    		}
 		    	});
+	    	},
+	    	//搜索样式
+	    	searchActivity(){
+	    		if(this.se==0){
+	    			$(".activityMask").show();
+					$(".search1").addClass("search2");
+					$(".search_input").addClass("search_input1");
+					this.se=1;
+	    		}
+	    	},
+	    	//点击遮罩层隐藏
+	    	hideSearch(){
+	    		if(this.se==1){
+	    			$(".activityMask").hide();
+					$(".search1").removeClass("search2");
+					$(".search_input").removeClass("search_input1");	
+					this.se=0
+	    		}
 	    	},
 	    	//人数排序
 	    	num:function(){
@@ -438,6 +472,7 @@
 					data:{token:token},
 					success:function(data){
 		  				that.info=data.info;
+		  				console.log(data)
 		  				console.log("获取活动分类成功,length:  "+that.info.length);
 		  			},
 		  			error:function(err){
@@ -455,7 +490,7 @@
 					this.changefoucs(this.$route.query.index);
 				}else{
 					//自动调用全部分类获取内容
-					this.type(0,0);
+					this.type(0,0,null);
 					
 				}
 			})
@@ -489,7 +524,7 @@
 	    height: 65rem;
 	    position: fixed;
 	    top: 0rem;
-	    z-index: -1;	
+	    z-index: -1;
 	}
 	.activity{
 		width: 100%;
@@ -504,7 +539,7 @@
 	.heads1 i{
 		font-size: 1.5rem;
 	}
-	.heads1>input{
+	/*.heads1>input{
 		width: 17rem;
 	    height: 2rem;
 	    margin: auto;
@@ -514,12 +549,46 @@
 	    padding: 0% 13%;
 	    margin-top: 1rem;
 	    margin-left: 2.8rem;
+	}*/
+	.activity .search_input{
+		width: 55%;
+	    height: 2rem;
+	    line-height: 2rem;
+	    margin: auto;
+	    padding: 0% 13%;
+	    margin-top: 4%;
+	    margin-left: 9%;
+	    font-size:1.2rem;
+		font-family:PingFang-SC-Regular;
+		font-weight:400;
+		color:rgba(153,153,153,1);
+		background:rgba(238,238,238,1);
+		opacity:0.5;
+		border-radius:1.2rem;
 	}
-	.search1{
+	.activity .search1{
 		position: absolute;
-	   	left: 4.2rem;
-	    top: 1.4rem;
+	    left: 4.2rem;
+	    top: 1.7rem;
 	    z-index: 88;
+	}
+	.activity .search_input1{
+		padding: 0% 20% 0% 5%;
+	}
+	.activity .search2{
+		position: absolute;
+	    left: 80%;
+	}
+	.activity .activityMask{
+		width: 100%;
+	    /*height: 52rem;*/
+	    height: 100%;
+	    background: rgba(0,0,0,1);
+	    opacity: 0.3;
+	    position: fixed;
+	    top: 4rem;
+	    z-index: 999;
+	    display: none;
 	}
 	.A_nav{
 		width: 100%;
@@ -551,8 +620,21 @@
 		border-bottom: 0.2rem solid #FAE64F;
 		color: #FAE64F !important;
 	}
-	.jjs{
+	.active-sort{
 		color: #FAE64F;
+	}
+	/*暂无活动文字*/
+	.activity .EmptyAcLi{
+		height: 4rem;
+		width: 95%;
+		text-align: center;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+	.activity .EmptyAcLi>.EmptyAc{
+		font-size: 1rem;
+		color: #B0B0B0;
 	}
 	hr{
 		width: 100%;

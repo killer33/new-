@@ -6,37 +6,37 @@
 			<p>企业认证信息</p>
 		</div>
 		<div class="show_qi">
-			<div><p>法人姓名：</p><p>111</p></div>
-			<div><p>法人电话：</p><p>111</p></div>
-			<div><p>身份证号：</p><p>111</p></div>
-			<div><p>企业类型：</p><p>111</p></div>
-			<div><p>企业名称：</p><p>111</p></div>
-			<div><p>企业邮箱：</p><p>111</p></div>
-			<div><p>企业固话：</p><p>111</p></div>
-			<div><p>企业地址：</p><p>111</p></div>
-			<div><p>企业唯一注册号：</p><p>111</p></div>
-			<div><p>缴纳保证金金额：</p><p>111</p></div>
+			<div><p>法人姓名：</p><p>{{realdata.realname}}</p></div>
+			<div><p>法人电话：</p><p>{{realdata.phone}}</p></div>
+			<div><p>身份证号：</p><p>{{realdata.idcard}}</p></div>
+			<div><p>企业类型：</p><p>{{realdata.company_type_id}}</p></div>
+			<div><p>企业名称：</p><p>{{realdata.company_name}}</p></div>
+			<div><p>企业邮箱：</p><p>{{realdata.email}}</p></div>
+			<div><p>企业固话：</p><p>{{realdata.telephone}}</p></div>
+			<div><p>企业地址：</p><p class="add">{{realdata.company_address}}</p></div>
+			<div><p>企业唯一注册号：</p><p>{{realdata.company_idcard}}</p></div>
+			<div><p>缴纳保证金金额：</p><p>{{realdata.money}}</p></div>
 		</div>
 		<div class="showtu">
 			<ul>
 				<li>
-					<div><img src="../../build/27 - 副本.jpg"/></div>
+					<div><img :src="imgUrl+realdata.logo_src"/></div>
 					<p>企业logo</p>
 				</li>
 				<li>
-					<img src="../../build/27 - 副本.jpg"/>
+					<img :src="imgUrl+realdata.front_pic"/>
 					<p>法人身份证正面</p>
 				</li>
 				<li>
-					<img src="../../build/27 - 副本.jpg"/>
+					<img :src="imgUrl+realdata.behind_pic"/>
 					<p>法人身份证反面</p>
 				</li>
 				<li>
-					<img src="../../build/27 - 副本.jpg"/>
+					<img :src="imgUrl+realdata.hand_pic"/>
 					<p>法人手持身份证</p>
 				</li>
 				<li>
-					<img src="../../build/27 - 副本.jpg"/>
+					<img :src="imgUrl+realdata.company_pic"/>
 					<p>营业执照</p>
 				</li>
 			</ul>
@@ -59,7 +59,9 @@
         data(){
             return {
                 content:null,
-                editorOption:{}
+                editorOption:{},
+                realdata:{},
+                imgUrl:''
             }
         },
         methods:{
@@ -69,6 +71,26 @@
             },
             onEditorChange(){//内容改变事件
             }
+        },
+        mounted(){
+        	this.imgUrl=imgJoin;
+        	this.$nextTick(()=>{
+				var that = this;
+				var token = window.localStorage.getItem("token");
+				$.ajax({
+					type:"post",
+					url:join+"user/show_company_type",
+					dataType:"json",
+					data:{token:token},
+					success:function(data){
+		  				console.log(data);
+		  				that.realdata=data.data;
+		  			},
+		  			error:function(err){
+						console.log("请求失败");
+					}
+				});
+			})
         }
     }
 </script>

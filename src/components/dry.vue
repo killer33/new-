@@ -22,6 +22,8 @@
 	    <button v-on:click="saveHtml">保存</button>
 	    <hr>
 		<button @click="ceshi()">测试接口</button>
+		<el-radio v-model="radio" label="1">备选项</el-radio>
+  		<el-radio v-model="radio" label="2">备选项</el-radio>
 	</div>
 </template>
 
@@ -36,6 +38,7 @@
 		        upLoadData: {
 			        token: ''
 			    },
+			    radio:'1',
 			    pic1:[],
 			    content:"",
                 editorOption:{

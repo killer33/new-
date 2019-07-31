@@ -7,13 +7,13 @@
 		</div>
 		<div class="ccc">
 			<ul>
-				<router-link :to="{path:'/certification',query:{name:0}}" tag="li" >
+				<router-link :to="{path:'/certification_buyhurry'}" tag="li" >
 					<div><img src="../../build/xianshimiaosha.png"/></div><p>立即使用</p>
 				</router-link>
-				<router-link :to="{path:'/certification',query:{name:1}}" tag="li">
+				<router-link :to="{path:'/certification_buycollage'}" tag="li">
 					<div><img src="../../build/pintuan .png"/></div><p>立即使用</p>
 				</router-link>
-				<router-link :to="{path:'/certification',query:{name:2}}" tag="li" @click.native="flushCom">
+				<router-link :to="{path:'/certification',query:{name:2}}" tag="li">
 					<div><img src="../../build/zidongyi.png"/></div><p>立即使用</p>
 				</router-link>
 			</ul>
@@ -29,7 +29,7 @@
 					<i class="iconfont">&#xe687;</i><br />
 					<span>活动</span>
 				</router-link>
-				<router-link to="/Release_1" tag="li" class="release" @click.native="flushCom">
+				<router-link to="/Release_1" tag="li" class="release">
 					<p><img src="../../build/fabu.png"/></p>
 					<span style="color:#FAE64F">发布</span>
 				</router-link>

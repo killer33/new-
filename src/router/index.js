@@ -73,10 +73,16 @@ import bill_record from '@/components/bill_record'
 import Withdrawal_record from '@/components/Withdrawal_record'
 //积分-提现-微信
 import withdrawal_WeChat from '@/components/withdrawal_WeChat'
+
 //发布
 import certification from '@/components/certification'
 //发布-实名认证
 import Not_real from '@/components/Not_real'
+//抢购发布
+import certification_buyhurry from '@/components/certification_buyhurry'
+//拼团发布
+import certification_buycollage from '@/components/certification_buycollage'
+
 //选择分类
 import selectionsort from '@/components/selectionsort'
 //个人中心
@@ -362,6 +368,19 @@ export default new Router({
       name: 'certification',
       component: certification
     },
+//  抢购发布
+    {
+      path: '/certification_buyhurry',
+      name: 'certification_buyhurry',
+      component: certification_buyhurry
+    },
+//  拼团发布
+    {
+      path: '/certification_buycollage',
+      name: 'certification_buycollage',
+      component: certification_buycollage
+    },
+    
 //  发布-实名认证
     {
       path: '/Not_real',

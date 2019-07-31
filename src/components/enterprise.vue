@@ -60,7 +60,7 @@
 				</li>
 			</ul>
 		</div>
-		<div class="search_mask"></div>
+		<div class="search_mask" @click="hideSearch"></div>
 		<!--底部-->
 		<div class="footer">
 			<ul>
@@ -201,6 +201,12 @@
 					this.a=1;
 					return;
 				}
+			},
+			//点击遮罩层退出
+			hideSearch(){
+				$(".search_mask").hide();
+				$(".search1").removeClass("search2");
+				$(".search_input").removeClass("search_input1");
 			},
 			//企业分类
 			type:function(item,index){

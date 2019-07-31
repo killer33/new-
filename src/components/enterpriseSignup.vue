@@ -7,13 +7,13 @@
 		</div>
 		<hr />
 		<div class="tb1">
-			<p>咨询电话:</p><input type="text" name="" id="" value="" placeholder="手机号/座机号/（区号-电话号码-分机号）"/>
+			<p>咨询电话:</p><input type="text" v-model="subdata.company_zi_phone" placeholder="手机号/座机号/（区号-电话号码-分机号）"/>
 		</div>
 		<div class="tb1">
-			<p>服务合作:</p><input type="number" name="" id="" value="" placeholder="手机号/座机号/（区号-电话号码-分机号）"/>
+			<p>服务合作:</p><input type="number"  v-model="subdata.company_fu_phone" placeholder="手机号/座机号/（区号-电话号码-分机号）"/>
 		</div>
 		<div class="registration_sure1">
-			<p>确定</p>
+			<p @click="showEnter">确定</p>
 		</div>
 	</div>
 </template>
@@ -21,7 +21,8 @@
 <script>
 	export default {
 		props:{
-			showEnter:{type:Function}
+			showEnter:{type:Function},
+			subdata:{type:Object},
 		}
 	}
 </script>

@@ -33,24 +33,24 @@
 	<div class="fb_box">
 		<div class="fb">
 			<ul>
-				<li @click="showExpense()">
-					<p>活动费用</p><input type="text" name="" id="" value="" placeholder="请填写具体费用信息"/>
-				</li>
-				<li class="Time_">
+				<router-link to="" tag="li" class="Time_">
 					<p>活动开始时间</p><p v-html='dates'></p><i class="iconfont">&#xe61f;</i>
-				</li>
-				<li class="Time_1">
+				</router-link>
+				<router-link to="" tag="li" class="Time_1">
 					<p>活动结束时间</p><p v-html='dates1'></p><i class="iconfont">&#xe61f;</i>
+				</router-link>
+				<li @click="showBuyCollage()">
+					<p><span class="star">*</span>拼团详细内容</p><p v-html="pintuan"></p><i class="iconfont">&#xe61f;</i>
 				</li>
-				<li class="Address_">
+				<router-link to="" tag="li" class="Address_">
 					<p>活动地址</p><p v-html='dates2'></p><i class="iconfont">&#xe61f;</i>
-				</li>
-				<li>
+				</router-link>
+				<router-link to="" tag="li">
 					<p>详细地址</p><input v-model="subdata.address" type="text" name="" id="" value="" placeholder="请填写活动具体地址"/>
-				</li>
-				<li>
+				</router-link>
+				<router-link to="" tag="li">
 					<p>活动人数</p><input v-model="subdata.number" type="text" name="" id="" value="" placeholder="请填写活动人数"/>
-				</li>
+				</router-link>
 				<li>
 					<p>活动方式</p>
 					<!--<div class="Outer_ring"><p class="check"></p></div><span class="online">线上</span>
@@ -63,14 +63,14 @@
 				<li @click="showSelect">
 					<p>活动类型</p><p>IT互联网</p><i class="iconfont">&#xe61f;</i>
 				</li>
-				<li>
+				<router-link to="" tag="li">
 					<p>开启报名</p>
 		          	<el-switch
 						v-model="value"
 						active-color="#FAE64F"
 						inactive-color="#F0F0F0">
 					</el-switch>
-				</li>
+				</router-link>
 				<li @click="showEnterprise()">
 					<p>报名信息</p><input type="text" name="" id="" value="" placeholder="请填写具体报名信息"/>
 				</li>
@@ -142,6 +142,15 @@
 	  <enterpriseSignup :showEnter="showEnter"></enterpriseSignup>
 	</van-popup>
 	
+	<!--抢购信息弹出-->
+    <!--<van-popup class='regUp' v-model="showBuy" position="right" :close-on-click-overlay="true" :overlay="true">
+	  <buyhurry :showBuyhurry="showBuyhurry" :subdata="subdata"></buyhurry>
+	</van-popup>-->
+	<!--拼团信息弹出-->
+	<van-popup class='regUp' v-model="showCol" position="right" :close-on-click-overlay="true" :overlay="true">
+	  <buyCollage :showBuyCollage="showBuyCollage" :subdata="subdata"></buyCollage>
+	</van-popup>
+	
 	<!--选择分类-->
 	<van-popup class='regUp' v-model="showSel" position="right" :close-on-click-overlay="true" :overlay="true">
 	  <selectionsort :showSelect="showSelect"></selectionsort>
@@ -153,12 +162,12 @@
 <script>
 	import { DatetimePicker,Area,Popup } from 'vant';
 	import areaList from '../../node_modules/vant/packages/area/demo/area.js'
-	//费用子组件
-	import expense from './expense'
 	//引入报名信息子组件
 	import registration_information from './registration_information'
 	//企业信息组件
 	import enterpriseSignup from './enterpriseSignup'
+	//拼团信息子组件
+	import buyCollage from './buyCollage'
 	//分类子组件
 	import selectionsort from './selectionsort'
 	
@@ -167,8 +176,8 @@
 		components:{
 	    	[DatetimePicker.name]:DatetimePicker,
 	    	registration:registration_information,
-	    	expense:expense,
 	    	enterpriseSignup:enterpriseSignup,
+	    	buyCollage:buyCollage,
 	    	selectionsort:selectionsort
 	  	},
 		data() {
@@ -178,6 +187,7 @@
 		      	desActivity:'',//描述活动
 		      	dates:'',//活动开始时间时间戳
 			    dates1:'',//活动结束时间时间戳
+
 			    dates2:'',//活动地址
 			    address:'',//活动详细地址
 			    number:'',//活动人数
@@ -748,10 +758,10 @@
 		position: relative;
 		top: 20%;
 	}
-	.certification .Time_choose{
+	.Time_choose{
 		display: none;
 	}
-	.certification .Time_choose1{
+	.Time_choose1{
 		display: none;
 	}
 	.Address_selection{
@@ -783,10 +793,10 @@
 		width: 100%;
 		
 	}
-	.certification .Time_choose .van-picker__toolbar{
+	.Time_choose .van-picker__toolbar{
 		display: none;
 	}
-	.certification .Time_choose1 .van-picker__toolbar{
+	.Time_choose1 .van-picker__toolbar{
 		display: none;
 	}
 	.Time_choose>p{

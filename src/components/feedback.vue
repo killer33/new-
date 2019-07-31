@@ -19,7 +19,7 @@
 				<!--on-remove	文件列表移除文件时的钩子	function(file, fileList)-->
 				<div class="upload">
 					<el-upload
-						action="http://nvchuang.com/index/user/upload"  
+						action="http://nvchuanghui.com/public/index.php/index/user/upload"  
 						list-type="picture-card"
 						:limit="5"
 						:data="upLoadData"
