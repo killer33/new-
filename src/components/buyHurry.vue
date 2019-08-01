@@ -8,22 +8,24 @@
 		<div class="cont">
 			<ul class="relation">
 				<li>
-					<p>抢购人数：</p>
+					<p>秒杀人数:</p>
 					<input type="text" v-model="subdata.num" placeholder="请填写具体费用信息"/>
 				</li>
 				<li>
-					<p>费用/人：</p>
+					<p>秒杀价格:</p>
 					<input type="text" v-model="subdata.price" placeholder="免费请填0，有人报名后不仅可修改"/>
 				</li>
 				<li @click="showStartTime">
-					<p>抢购时间：</p>
-					<p>{{hurryStart}}</p>
+					<p>秒杀时间:</p>
+					<p v-if="subdata.hd_start_time">{{parseInt(subdata.hd_start_time) | datetime}}</p>
+					<p v-else>请选择开始时间</p>
 				</li>
 				<li @click="showEndTime"> 
 					<p></p>
-					<p>{{hurryEnd}}</p>
+					<p v-if="subdata.hd_end_time">{{parseInt(subdata.hd_end_time)  | datetime}}</p>
+					<p v-else>请选择结束时间</p>
 				</li>
-				<!--<li>
+				<li>
 					<p>审核</p>
 					<span>抢购成功后需要我审核</span>
 					<el-switch class="switch"
@@ -31,7 +33,7 @@
 						active-color="#FAE64F"
 						inactive-color="#F0F0F0">
 					</el-switch>
-				</li>-->
+				</li>
 			</ul>
 		</div>
 		<div class="true">
@@ -76,10 +78,8 @@
 				showStart:false,
 				showEnd:false,
 		      	minDate: new Date(),
-		      	maxDate: new Date(2020,12,31),
+		      	maxDate: new Date(2050,12,31),
 		      	currentDate: new Date(),
-		      	hurryStart:'请选择开始时间',
-		      	hurryEnd:'请选择结束时间'
 			}
 		},
 		props:{
@@ -104,57 +104,17 @@
 //          抢购开始时间确定按钮
             con:function(){
             	var d=this.currentDate;//获取数列当前时间
-            	var year = d.getFullYear();
-            	var month = d.getMonth()+1;
-            	var day = d.getDate();
-            	var hour = d.getHours();
-            	var mintes = d.getMinutes();
-            	//判断当值小于10+“ 0 ”
-            	if (month<10) {
-            		month="0"+month;
-            	}
-            	if (day<10) {
-            		day="0"+day;
-            	}
-            	if (hour<10) {
-            		hour="0"+hour;
-            	}
-            	if (mintes<10) {
-            		mintes="0"+mintes;
-            	}
-            	var resDate = year + '-' + month + '-' + day + ' ' + hour + ':' + mintes;
-            	this.hurryStart=resDate;//打印到页面
 	    		var start_time=new Date(d).getTime();//活动开始时间--时间戳
 //	    		console.log(start_time);
-	    		this.subdata.hurryStart=start_time;
+	    		this.subdata.hd_start_time=start_time;
 	    		this.showStartTime();
             },
 //          抢购结束时间确定按钮
             end:function(){
             	var d=this.currentDate;//获取数列当前时间
-            	var year = d.getFullYear();
-            	var month = d.getMonth()+1;
-            	var day = d.getDate();
-            	var hour = d.getHours();
-            	var mintes = d.getMinutes();
-            	//判断当值小于10+“ 0 ”
-            	if (month<10) {
-            		month="0"+month;
-            	}
-            	if (day<10) {
-            		day="0"+day;
-            	}
-            	if (hour<10) {
-            		hour="0"+hour;
-            	}
-            	if (mintes<10) {
-            		mintes="0"+mintes;
-            	}
-            	var resDate = year + '-' + month + '-' + day + ' ' + hour + ':' + mintes;
-            	this.hurryEnd=resDate;//打印到页面
 	    		var end_time1=new Date(d).getTime();//活动结束时间--时间戳
 //	    		console.log(end_time1);
-	    		this.subdata.hurryEnd=end_time1;
+	    		this.subdata.hd_end_time=end_time1;
 				this.showEndTime();
             },
 		},

@@ -8,20 +8,22 @@
 		<div class="cont">
 			<ul class="relation">
 				<li>
-					<p>拼团人数：</p>
-					<input type="text" placeholder="请填写具体费用信息"/>
+					<p>拼团人数:</p>
+					<input type="text" v-model="subdata.num" placeholder="请填写具体费用信息"/>
 				</li>
 				<li>
-					<p>费用/人：</p>
-					<input type="text" placeholder="免费请填0，有人报名后不可修改"/>
+					<p>拼团价格:</p>
+					<input type="text" v-model="subdata.price" placeholder="免费请填0，有人报名后不可修改"/>
 				</li>
-				<li>
-					<p>拼团时间：</p>
-					<input type="text" placeholder="请选择开始时间"/>
+				<li @click="showStartTime">
+					<p>拼团时间:</p>
+					<p v-if="subdata.hd_start_time">{{parseInt(subdata.hd_start_time) | datetime}}</p>
+					<p v-else>请选择开始时间</p>
 				</li>
-				<li>
+				<li @click="showEndTime"> 
 					<p></p>
-					<input type="text" placeholder="请选择结束时间"/>
+					<p v-if="subdata.hd_end_time">{{parseInt(subdata.hd_end_time)  | datetime}}</p>
+					<p v-else>请选择结束时间</p>
 				</li>
 				<li>
 					<p>审核</p>
@@ -32,11 +34,11 @@
 						inactive-color="#F0F0F0">
 					</el-switch>
 				</li>
-				<li @click="showPicUp">
+				<!--<li @click="showPicUp">
 					<p>未完成拼团</p>
 					<p>{{collage}}</p>
 					<i class="iconfont">&#xe61f;</i>
-				</li>
+				</li>-->
 			</ul>
 			<van-popup v-model="showPic" position="bottom" class="sePopup">
 				<div class="title">
@@ -50,8 +52,36 @@
 		</div>
 
 		<div class="true">
-			<button>确定</button>
+			<button @click="showBuyCollage">确定</button>
 		</div>
+		<van-popup class="buyTime" v-model="showStart" position="bottom">
+			<div class="choosetime">
+				<p>请选择抢购开始时间<br /><span>请上下拨动进行选择</span></p>
+				<van-datetime-picker
+				  v-model="currentDate"
+				  type="datetime"
+				  :min-date="minDate"
+				  :max-date="maxDate"
+				  :show-toolbar="false"
+				/>
+				<button class="bu-true" @click="con">确定</button>
+				<button class="bu-false" @click="showStartTime">取消</button>
+			</div>
+		</van-popup>
+		<van-popup class="buyTime" v-model="showEnd" position="bottom">
+			<div class="choosetime">
+				<p>请选择抢购结束时间<br /><span>请上下拨动进行选择</span></p>
+				<van-datetime-picker
+				  v-model="currentDate"
+				  type="datetime"
+				  :min-date="minDate"
+				  :max-date="maxDate"
+				  :show-toolbar="false"
+				/>
+				<button class="bu-true" @click="end">确定</button>
+				<button class="bu-false" @click="showEndTime">取消</button>
+			</div>
+		</van-popup>
 	</div>
 </template>
 <script>
@@ -62,13 +92,33 @@
 				collage:"恢复原价",
 				columns:['恢复原价','已拼团的保持不变其余原价进行'],
 				Select:'',
-				showPic:false
+				showPic:false,
+				showStart:false,
+				showEnd:false,
+				minDate: new Date(),
+		      	maxDate: new Date(2050,12,31),
+		      	currentDate: new Date(),
 			}
 		},
 		props:{
-			showBuyCollage:{type:Function}
+			showBuyCollage:{type:Function},
+			subdata:{type:Object},
 		},
 		methods:{
+			showStartTime(){
+				if(this.showStart==false){
+					this.showStart=true;
+				}else{
+					this.showStart=false;
+				}
+			},
+			showEndTime(){
+				if(this.showEnd==false){
+					this.showEnd=true;
+				}else{
+					this.showEnd=false;
+				}
+			},
 			showPicUp(){
 				if(this.showPic==false){
 					this.showPic=true;
@@ -82,7 +132,23 @@
 			selectTrue(){
 				this.collage=this.Select;
 				this.showPic=false;
-			}
+			},
+//          抢购开始时间确定按钮
+            con:function(){
+            	var d=this.currentDate;//获取数列当前时间
+	    		var start_time=new Date(d).getTime();//活动开始时间--时间戳
+//	    		console.log(start_time);
+	    		this.subdata.hd_start_time=start_time;
+	    		this.showStartTime();
+            },
+//          抢购结束时间确定按钮
+            end:function(){
+            	var d=this.currentDate;//获取数列当前时间
+	    		var end_time1=new Date(d).getTime();//活动结束时间--时间戳
+//	    		console.log(end_time1);
+	    		this.subdata.hd_end_time=end_time1;
+				this.showEndTime();
+            },
 		}
 	}
 </script>
@@ -137,9 +203,12 @@
 	    margin-left: 3%;
 	}
 	.relation>li>p:nth-child(2){
-		float: right;
-		margin-right: 10%;
-		color: #666;
+		width: 60%;
+	    height: 3.5rem;
+	    line-height: 3.5rem;
+	    margin-left: 4%;
+	    float: left;
+	    color: #999999;
 	}
 	.relation>li>i{
 		color: #999;

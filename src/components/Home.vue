@@ -58,7 +58,7 @@
 					<router-link to="/buy" tag="li" v-for="(item,index) in gussActivity" :key="index">
 						<img :src="imgUrl+item.pic"/>
 						<p class="Ph1"><span>{豌豆思维}</span>{{item.tit}}</p>
-						<p class="Ph2">{{parseInt(item.start) | datetimeFilter}}<span>{{item.address}}</span></p>
+						<p class="Ph2">{{parseInt(item.start) | datetimeFilte}}<span>{{item.address}}</span></p>
 					</router-link>
 				</ul>
 			</div>
@@ -261,7 +261,7 @@
 					dataType:"json",
 					data:{},
 					success:function(data){
-//						console.log(data);
+						console.log(data);
 						that.gussActivity=data.data;
 						//判断活动
 						if(that.gussActivity.length==0){
@@ -462,21 +462,21 @@
 		background: #F8F8F8;
 	}
 	/*猜你喜欢*/
-	.guesslove{
+	.Home .guesslove{
 		width: 100%;
 /*		height: 31rem;*/
 	}
-	.guesslove>p{
+	.Home .guesslove>p{
 		width: 100%;
 		height: 3rem;
 		line-height: 3rem;	
 	}
-	.guesslove>p>span:first-child{
+	.Home .guesslove>p>span:first-child{
 		margin-left: 3%;
 	    font-size: 1.6rem;
 	    font-weight: bold;
 	}
-	.guesslove>p>span:last-child{
+	.Home .guesslove>p>span:last-child{
 		margin-left: 60%;
 	}
 	.love{
@@ -487,7 +487,7 @@
 	}
 	.love>ul>li{
 		width: 45%;
-	    height: 13rem;	
+	    height: 15rem;	
 	    float: left;
 	    margin-left: 3%;  
 	}
@@ -501,11 +501,15 @@
 	    border-radius: 0.5rem;
 	}
 	.love>ul>li>p{
+
 		margin-left: 2%;
 		margin-top: 2%;
 		text-align: left;
+		overflow: hidden;
 	}
 	.Ph1{
+		
+		height: 2.7rem;
 		font-size: 1.3rem;
 		margin-left: 4% !important;
 	}
@@ -521,7 +525,7 @@
 		color: #A1A1A1;
 	}
 	.Ph2>span{
-		margin-left: 20%;
+		margin-left: 10%;
 	}
 	/*推荐企业*/
 	.tjqy{

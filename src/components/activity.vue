@@ -460,7 +460,7 @@
 	    	var token = window.localStorage.getItem("token");
 	    	if(!token){
 	    		window.location.href="#/login";
-	    	}
+	    	}	
 	    	//获取活动分类
 			this.$nextTick(()=>{
 				var that = this;

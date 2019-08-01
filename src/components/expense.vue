@@ -11,19 +11,19 @@
 			<ul class="relation">
 				<li>
 					<p> 票种名称：</p>
-					<input type="text" placeholder="请填写具体费用信息">
+					<input type="text" v-model="subdata.ticket_name" placeholder="请填写具体费用信息">
 				</li>
 				<li>
 					<p>票价：</p>
-					<input type="text" placeholder="免费请填0，有人报名后不可修改">
+					<input type="text" v-model="subdata.price" placeholder="免费请填0，有人报名后不可修改">
 				</li>
 				<li>
 					<p>会员价：</p>
-					<input type="text" placeholder="不填则无会员价">
+					<input type="text" v-model="subdata.vip_price" placeholder="不填则无会员价">
 				</li>
 				<li>
 					<p>数量：</p>
-					<input type="text" placeholder="该票种可供购买的总量">
+					<input type="text" v-model="subdata.num" placeholder="该票种可供购买的总量">
 				</li>
 			</ul>
 
@@ -38,25 +38,26 @@
 						inactive-color="#F0F0F0">
 					</el-switch>
 				</li>
-				<li class="purchase">
+				<!--<li class="purchase">
 					<p>限购：</p>
 					<p>
 						<input type="text">
 						<span>张起售</span>
 					</p>
-				</li>
-				<li class="purchase">
+				</li>-->
+				<!--<li class="purchase">
 					<p></p>
 					<p>
 						<span class="tint1">每人最多购买</span>
 						<input type="text">
 						<span>张</span>
 					</p>
-				</li>
+				</li>-->
 				<li class="purchase" @click="showSeUp">
 					<p>售票时间：</p>
 					<p>
-						<span>{{selected}}</span>
+						<span v-if="subdata.over_start_name">{{subdata.over_start_name}}</span>
+						<span v-else>请选择</span>
 						<i class="iconfont">&#xe61f;</i>
 					</p>
 				</li>
@@ -86,7 +87,7 @@
 			
 		</div>
 		<div class="true">
-			<button>确定</button>
+			<button @click="showExpense">确定</button>
 		</div>
 	</div>
 </template>
@@ -100,9 +101,10 @@
 				b:true,
 				value:true,
 				showSe:false,
-				columns:['活动开始前半小时可报名','活动结束前均可报名','活动进行中也可报名'],
+				columns:['活动开始前半小时可报名','活动结束前均可报名'],
 				Select:'',
-				selected:'活动结束前均可报名'
+				Index:'',
+//				selected:''
 			}
 		},
 		methods: {
@@ -117,16 +119,21 @@
 					this.showSe=false;
 				}
 			},
-			onChange(Picker,value){
+			onChange(Picker,value,index){
 				this.Select=value;
+				this.Index=index;
 			},
 			selectTrue(){
-				this.selected=this.Select;
+//				this.selected=this.Select;
 				this.showSe=false;
+				this.subdata.over_start=this.Index;
+				console.log(this.Index);
+				this.subdata.over_start_name=this.Select;
 			}
 		},
 		props:{
-			showExpense:{type:Function}
+			showExpense:{type:Function},
+			subdata:{type:Object},
 		}
 	}
 </script>

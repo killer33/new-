@@ -444,21 +444,21 @@
 	    top: 50%;
 	}
 	/*猜你喜欢*/
-	.guesslove{
+	.activityIntroduction .guesslove{
 		width: 100%;
 		height: 31rem;
 	}
-	.guesslove>p{
+	.activityIntroduction .guesslove>p{
 		width: 100%;
 		height: 3rem;
 		line-height: 3rem;	
 	}
-	.guesslove>p>span:first-child{
+	.activityIntroduction .guesslove>p>span:first-child{
 		margin-left: 3%;
 	    font-size: 16px;
 	    font-weight: bold;
 	}
-	.guesslove>p>span:last-child{
+	.activityIntroduction .guesslove>p>span:last-child{
 		margin-left: 60%;
 	}
 	.love{
