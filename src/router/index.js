@@ -76,8 +76,6 @@ import withdrawal_WeChat from '@/components/withdrawal_WeChat'
 
 //发布
 import certification from '@/components/certification'
-//发布-实名认证
-import Not_real from '@/components/Not_real'
 //抢购发布
 import certification_buyhurry from '@/components/certification_buyhurry'
 //拼团发布
@@ -380,14 +378,7 @@ export default new Router({
       name: 'certification_buycollage',
       component: certification_buycollage
     },
-    
-//  发布-实名认证
-    {
-      path: '/Not_real',
-      name: 'Not_real',
-      component: Not_real
-    },
-//  选择分类
+//分类
     {
       path: '/selectionsort',
       name: 'selectionsort',

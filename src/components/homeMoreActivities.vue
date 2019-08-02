@@ -7,7 +7,7 @@
 		</div>
 		<div class="love1">
 			<ul>
-				<router-link to="" tag="li" v-for="(item,index) in activitydata" :key="index">
+				<router-link :to="{path:'/buy',query:{id:item.id}}" tag="li" v-for="(item,index) in activitydata" :key="index">
 					<img :src="imgUrl+item.pic"/>
 					<p class="Ph11">{<span>豌豆思维</span>} {{item.tit}}</p>
 					<p class="Ph22"><span>{{parseInt(item.start) | datetimeFilter}}</span> 开始  <span>{{item.address}}</span></p>

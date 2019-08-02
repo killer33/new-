@@ -287,4 +287,59 @@
 		color: #999;
 		margin-left: 1rem;
 	}
+	/*活动开始时间*/
+	.buyTime{
+		height: 32rem;
+		z-index: 999;
+		border-radius: 4% 4% 0 0;
+	}
+	.buyTime .choosetime{
+		text-align: center;
+	}
+	.buyTime .choosetime>p{
+		width: 100%;
+	    height: 6rem;
+	    text-align: center;
+	    font-size: 1.6rem;
+	    font-weight: bold;
+	    border-radius: 1.5rem 1.5rem 0 0;
+	    line-height: 5rem;
+	    position: relative;
+	    background: white;
+	}
+	.buyTime .choosetime>p>span{
+		display: block;
+	    position: absolute;
+	    top: 30%;
+	    left: 36%;
+	    font-size: 1.2rem;
+	    font-weight: normal;
+	}
+	.buyTime .choosetime .cotrl{
+		display: flex;
+	}
+	.buyTime .choosetime .cotrl>p{
+		text-align: center;
+		margin: 0 auto;
+	}
+	.buyTime button{
+		width: 13rem;
+		height: 3rem;
+		text-align: center;
+		line-height: 2.5rem;
+		border-radius: 0.5rem;
+	    margin-top: 9%;
+	    font-size: 1.5rem;
+	}
+	.buyTime button.bu-true{
+		background: #FAE74F;
+		color: #333333;
+		margin-right: 1rem;
+	}
+	.buyTime button.bu-false{
+		background: #fff;
+		border:1px solid #999;
+		color: #999;
+		margin-left: 1rem;
+	}
 </style>

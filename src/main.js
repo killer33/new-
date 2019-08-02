@@ -69,6 +69,38 @@ var d=date.getDate();//日
 d<10&&(d="0"+d);
 return `${y}-${m}-${d}`;
 });
+
+Vue.filter("activity_datetime",function(val){
+// 创建日期对象
+var date=new Date(val);
+// 获取 月 日 小时 分 钟
+var y=date.getFullYear();//年份
+var m=date.getMonth()+1;//月份0~11
+var d=date.getDate();//日
+var h=date.getHours();
+var mi=date.getMinutes();
+// 返回字符串 Y-M-D h:mi:s
+// m<10&&(m="0"+m);//如果月份<10;月份前面+0
+d<10&&(d="0"+d);
+mi<10&&(mi="0"+mi)
+return `${y}.${m}.${d} ${h}:${mi}`;
+});
+
+//活动查看过滤器
+Vue.filter("activity_Num",function(val){
+	if(val+1){
+		var hh=val.toString();
+		var f=hh.slice(0,1);
+		var s=hh.slice(1,2);
+		if(val>10000){
+			return `${f}.${s}w`;
+		}else{
+			return val;
+		}
+	}
+
+})
+
 //1. 创建日期的过滤器
 Vue.filter("datetime",function(val){
 // 创建日期对象
@@ -85,6 +117,7 @@ d<10&&(d="0"+d);
 mi<10&&(mi="0"+mi)
 return `${y}年${m}月${d}日${h}:${mi}`;
 });
+
 
 
 

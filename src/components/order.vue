@@ -47,12 +47,92 @@
 			</ul>
 		</div>
 		<div class="determine">
-			<router-link to="/order_enterpassword" tag="p">确认支付</router-link>
+			<p tag="p" @click='toPay'>确认支付</p>
 		</div>
+		<van-popup class='passUp' v-model="showSel" :close-on-click-overlay="true" :overlay="false">
+		  		<van-password-input
+				  :value="payPassword"
+				  info="密码为 6 位数字"
+				  @focus="showKeyboard = true"
+				/>
+				<button @click="paymoney">支付</button>
+		</van-popup>
+		<van-number-keyboard
+			:show="showKeyboard"
+			@input="onInput"
+			@delete="onDelete"
+			@blur="showKeyboard = false"
+		/>
 	</div>
 </template>
 
 <script>
+	import { PasswordInput, NumberKeyboard,Popup } from 'vant';
+	export default {
+		data(){
+			return{
+				payPassword:'',
+				showKeyboard:false,
+				showSel:false,
+			}
+		},
+		methods:{
+			onInput(key) {
+			    this.payPassword = (this.payPassword + key).slice(0, 6);
+			},
+			onDelete() {
+			    this.payPassword= this.payPassword.slice(0, this.payPassword.length - 1);
+			},
+			toPay(){
+				if(this.showSel==true){
+					this.showSel=false;
+				}else{
+					this.showSel=true;
+				}
+			},
+			paymoney(){
+				var order_id=this.$route.query.order_id;
+				var token = window.localStorage.getItem("token");
+				var that = this;
+				$.ajax({
+					type:"post",
+					url:join+"activity/pay_order",
+					dataType:"json",
+					data:{token:token,order_id:order_id,paypass:that.payPassword},
+					success:function(data){
+		  				console.log(data);
+//		  				that.info=data.data;
+		  			},
+		  			error:function(err){
+						console.log("请求失败");
+						console.log(err);
+					}
+				});
+			}
+		},
+		mounted(){
+			var order_id=this.$route.query.order_id;
+			var token = window.localStorage.getItem("token");
+			var that = this;
+			this.$nextTick(()=>{
+				$.ajax({
+					type:"post",
+					url:join+"activity/order_detail",
+					dataType:"json",
+					data:{token:token,order_id:order_id},
+					success:function(data){
+		  				console.log(data);
+//		  				that.info=data.data;
+		  			},
+		  			error:function(err){
+						console.log("请求失败");
+						console.log(err);
+					}
+				});
+		  		return;
+			})
+		}
+	}
 </script>
 
 <style>
@@ -74,6 +154,7 @@
 	}
 	.order{
 		width: 100%;
+		background: #fff;
 	}
 	.head5{
 		width: 100%;
@@ -270,5 +351,12 @@
 	    margin: auto;
 	    position: relative;
 	    top: 50%;
+	}
+	.passUp{
+		width: 80%;
+		height: 20rem;
+	}
+	.van-number-keyboard{
+		z-index: 2008;
 	}
 </style>

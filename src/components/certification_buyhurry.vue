@@ -373,6 +373,7 @@
 		  				},
 		  				success:function(data){
 		  					console.log(data);
+		  					that.$router.push({path:'/buy',query:{id:data.activity_id}})
 		  				},
 		  				error:function(err){
 		  					console.log(err);

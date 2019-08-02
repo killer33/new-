@@ -55,7 +55,7 @@
 			</p>
 			<div class="love" v-show="hasactivity">
 				<ul>
-					<router-link to="/buy" tag="li" v-for="(item,index) in gussActivity" :key="index">
+					<router-link :to="{path:'/buy',query:{id:item.id}}" tag="li" v-for="(item,index) in gussActivity" :key="index">
 						<img :src="imgUrl+item.pic"/>
 						<p class="Ph1"><span>{豌豆思维}</span>{{item.tit}}</p>
 						<p class="Ph2">{{parseInt(item.start) | datetimeFilte}}<span>{{item.address}}</span></p>

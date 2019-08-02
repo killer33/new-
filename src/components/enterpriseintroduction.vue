@@ -24,11 +24,6 @@
 				<p class="xqtit2">企业简介</p>
 				<p class="xqsm2" v-html="data.details"></p>
 				<div class="tu2">
-					<!--<ul>
-						<li><img src="../../build/27.jpg"/></li>
-						<li><img src="../../build/yml.jpg"/></li>
-						<li><img src="../../build/zz.jpg"/></li>
-					</ul>-->
 					<p class="bm2">粉丝</p>
 					<div class="bm_ul2" v-show="hasfans">
 						<ul>
@@ -53,7 +48,7 @@
 					</p>
 					<div class="love2" v-show="hasactivity">
 						<ul>
-							<router-link to="" tag="li" v-for="(item,index) in activity" :key="index">
+							<router-link :to="{path:'/buy',query:{id:item.id}}" tag="li" v-for="(item,index) in activity" :key="index">
 								<img :src="item.pic"/>
 								<p class="Ph3"><span>{ {{data.company_name}} }</span>{{item.tit}}</p>
 								<p class="Ph4">{{parseInt(item.start) | datetimeFilter}} <span>{{item.address}}</span></p>
@@ -101,7 +96,12 @@
 </template>
 
 <script>
+	import {Popup} from 'vant'
+	import moreFans from './moreFans'
 	export default {
+		components:{
+			moreFans:moreFans
+	  	},
 		data(){
 		  	return{
 		  		data:{},
@@ -144,7 +144,7 @@
 						success:function(data){
 //			  				console.log("请求成功");
 //			  				console.log(data);
-			  				that.$message.warning("关注成功！");
+			  				that.$message.success("关注成功！");
 			  			},
 			  			error:function(err){
 							console.log("请求失败"+err);
@@ -497,6 +497,7 @@
 	    background: rgba(0,0,0,1);
 	    opacity: 0.3;
 	    color: white;
+	    font-size: 0.2rem;
 	}
 	.enterpriseintroduction hr{
 		width: 105%;
